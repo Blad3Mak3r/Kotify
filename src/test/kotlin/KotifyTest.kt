@@ -7,7 +7,7 @@ import tv.blademaker.Kotify
 import tv.blademaker.exceptions.KotifyRequestException
 
 class KotifyTest {
-
+/*
     private val albumID = "0a70673Gb7q0uqWyoCRy4J"
     private val invalidAlbumID = "0a70673Gb7q0uqWyoCRy4J1234"
     private val notFoundAlbumID = "0a70073Gb7q0uqWyoCRy4J"
@@ -67,7 +67,7 @@ class KotifyTest {
         assert(tracks.total == expected) { "not expected value" }
     }
 
-    /*@Test
+    @Test
     fun `Rate limit`(): Unit = runBlocking {
         val number = 500
 
@@ -80,10 +80,12 @@ class KotifyTest {
         }
 
         awaitAll(*requests.toTypedArray())
-    }*/
+    }
 
     @After
     fun close() {
         kotify.close()
     }
+
+ */
 }

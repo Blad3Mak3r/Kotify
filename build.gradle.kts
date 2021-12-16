@@ -1,10 +1,17 @@
 plugins {
     kotlin("jvm") version Versions.KOTLIN
-    kotlin("plugin.serialization") version Versions.KOTLIN apply true
+    kotlin("plugin.serialization") version Versions.KOTLIN
+
+    id("org.jetbrains.dokka") version "1.6.0"
+
+    `maven-publish`
+    `java-library`
+    signing
 }
 
 group = "tv.blademaker"
-version = "0.1.0"
+val versionObj = Version(0, 1, 0)
+version = versionObj.toString()
 
 repositories {
     mavenCentral()
@@ -24,4 +31,106 @@ dependencies {
 
     testImplementation("junit:junit:4.13.2")
     testImplementation(Deps.LOGBACK)
+}
+
+val dokkaOutputDir = "$buildDir/dokka"
+
+tasks {
+    withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+        this.kotlinOptions.jvmTarget = "11"
+    }
+
+    getByName<org.jetbrains.dokka.gradle.DokkaTask>("dokkaHtml") {
+        outputDirectory.set(file(dokkaOutputDir))
+    }
+}
+
+val deleteDokkaOutputDir by tasks.register<Delete>("deleteDokkaOutputDirectory") {
+    delete(dokkaOutputDir)
+}
+
+val javadocJar = tasks.register<Jar>("javadocJar") {
+    dependsOn(deleteDokkaOutputDir, tasks.dokkaHtml)
+    archiveClassifier.set("javadoc")
+    from(dokkaOutputDir)
+}
+
+java {
+    withSourcesJar()
+}
+
+val mavenCentralRepository = if (versionObj.isSnapshot)
+    "https://s01.oss.sonatype.org/content/repositories/snapshots/"
+else
+    "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
+
+publishing {
+    repositories {
+        maven {
+            name = "MavenCentral"
+            url = uri(mavenCentralRepository)
+
+            credentials {
+                username = System.getenv("OSSRH_USERNAME")
+                password = System.getenv("OSSRH_PASSWORD")
+            }
+        }
+    }
+
+    publications {
+        create<MavenPublication>("MavenCentral") {
+            artifactId = "kotify"
+            groupId = project.group as String
+            version = project.version as String
+            from(components["java"])
+            artifact(javadocJar)
+
+            pom {
+                name.set(project.name)
+                description.set("Advanced coroutine-based Spotify API client.")
+                url.set("https://github.com/Blad3Mak3r/Kotify")
+                issueManagement {
+                    system.set("GitHub")
+                    url.set("https://github.com/Blad3Mak3r/Kotify/issues")
+                }
+                licenses {
+                    license {
+                        name.set("Apache License 2.0")
+                        url.set("https://github.com/Blad3Mak3r/Kotify/LICENSE.txt")
+                        distribution.set("repo")
+                    }
+                }
+                scm {
+                    url.set("https://github.com/Blad3Mak3r/Kotify")
+                    connection.set("https://github.com/Blad3Mak3r/Kotify.git")
+                    developerConnection.set("scm:git:ssh://git@github.com:Blad3Mak3r/Kotify.git")
+                }
+                developers {
+                    developer {
+                        name.set("Juan Luis Caro")
+                        url.set("https://github.com/Blad3Mak3r")
+                    }
+                }
+            }
+        }
+    }
+}
+
+class Version(
+    private val major: Int,
+    private val minor: Int,
+    private val revision: Int
+) {
+    val isSnapshot = System.getenv("OSSRH_SNAPSHOT") != null
+
+    override fun toString(): String {
+        return "$major.$minor.$revision" + if (isSnapshot) "-SNAPSHOT" else ""
+    }
+}
+
+val canSign = System.getenv("SIGNING_KEY_ID") != null
+if (canSign) {
+    signing {
+        sign(publishing.publications["MavenCentral"])
+    }
 }

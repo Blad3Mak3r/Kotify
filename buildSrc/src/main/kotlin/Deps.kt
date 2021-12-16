@@ -20,14 +20,3 @@ object Versions {
     const val SLF4J_API = "1.7.32"
     const val LOGBACK = "1.2.7"
 }
-
-data class Version(
-    val major: Int,
-    val minor: Int,
-    val revision: Int,
-    val classifier: String? = null
-) {
-    override fun toString(): String {
-        return "$major.$minor.$revision" + if (classifier != null) "-$classifier" else ""
-    }
-}
