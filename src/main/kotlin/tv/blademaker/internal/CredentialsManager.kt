@@ -45,8 +45,6 @@ class CredentialsManager internal constructor(
         val token = retrieveAccessToken()
         accessTokenRef.set(token.accessToken)
         expireStampRef.set(token.expiresAt)
-        Kotify.log.warn(expireStampRef.get().toString())
-        Kotify.log.warn(System.currentTimeMillis().toString())
     }
 
     private suspend fun retrieveAccessToken(): AuthorizationResponse {
