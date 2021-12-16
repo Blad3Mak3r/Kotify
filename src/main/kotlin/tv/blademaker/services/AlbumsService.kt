@@ -1,14 +1,12 @@
 package tv.blademaker.services
 
-import io.ktor.client.request.*
 import kotlinx.coroutines.Deferred
 import kotlinx.serialization.builtins.ListSerializer
 import tv.blademaker.Kotify
 import tv.blademaker.models.Album
 import tv.blademaker.models.TracksPaginator
-import tv.blademaker.services.request
 
-class AlbumService(override val kotify: Kotify) : Service {
+class AlbumsService(override val kotify: Kotify) : Service {
 
     suspend fun get(id: String): Album = request {
         path = "/v1/albums/$id"

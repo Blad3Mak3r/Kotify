@@ -17,6 +17,8 @@ class KotifyRequestException(
 
     val headers = response.headers.toMap()
 
+    override val message: String = "${error.message} [${error.status}]"
+
     companion object {
         suspend fun complete(deferred: CompletableDeferred<*>, ex: ClientRequestException) {
             deferred.completeExceptionally(from(ex))

@@ -1,13 +1,19 @@
 import io.ktor.client.features.*
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
+import kotlinx.serialization.json.Json
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import tv.blademaker.Kotify
 import tv.blademaker.exceptions.KotifyRequestException
+import tv.blademaker.models.Album
+import tv.blademaker.models.Playlist
 
 class KotifyTest {
-/*
+
+
     private val albumID = "0a70673Gb7q0uqWyoCRy4J"
     private val invalidAlbumID = "0a70673Gb7q0uqWyoCRy4J1234"
     private val notFoundAlbumID = "0a70073Gb7q0uqWyoCRy4J"
@@ -68,18 +74,22 @@ class KotifyTest {
     }
 
     @Test
-    fun `Rate limit`(): Unit = runBlocking {
-        val number = 500
+    fun `Test playlist`() = runBlocking {
+        val id = /* "2J0TRU2EDG29qlmxdGa4xa" */ "3bN65vmek1MvTlmAYTqNQ9"
 
-        val requests = mutableListOf<Deferred<Album>>()
+        val totalExpected = 430
 
-        for (x in 0 until number) {
-            println()
-            println("Request $x")
-            requests.add(kotify.albums.getAsync(albumID))
+        val playlist = kotify.playlists.get(id)
+
+        assert(playlist.id == id) {
+            "not equal ids"
         }
 
-        awaitAll(*requests.toTypedArray())
+        val tracks = kotify.playlists.fetchAllTracks(playlist)
+
+        assert(tracks.size == totalExpected) {
+            "received a total of ${tracks.size} but required is $totalExpected"
+        }
     }
 
     @After
@@ -87,5 +97,4 @@ class KotifyTest {
         kotify.close()
     }
 
- */
 }

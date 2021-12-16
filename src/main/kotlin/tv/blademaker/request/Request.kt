@@ -49,8 +49,6 @@ class Request<T : Any>(requestBuilder: Builder<T>.() -> Unit) {
     }
 
     suspend fun execute(kotify: Kotify): Boolean = coroutineScope {
-        println("Executing request $url")
-
         try {
             val auth = kotify.credentials.getAccessToken()
 
@@ -81,7 +79,9 @@ class Request<T : Any>(requestBuilder: Builder<T>.() -> Unit) {
                 else -> KotifyRequestException.complete(deferred, ex)
             }
 
-
+        } catch (e: Exception) {
+            Kotify.log.error("Handled exception executing request ${this@Request}: ${e.message}", e)
+            deferred.completeExceptionally(e)
         }
 
         return@coroutineScope true

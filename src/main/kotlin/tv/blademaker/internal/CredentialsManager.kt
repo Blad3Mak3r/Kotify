@@ -37,7 +37,6 @@ class CredentialsManager internal constructor(
             if (isExpired) Kotify.log.debug("Token expired.")
             updateAccessToken()
         }
-
         return accessTokenRef.get()
     }
 

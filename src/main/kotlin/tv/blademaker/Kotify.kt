@@ -8,7 +8,7 @@ import kotlinx.coroutines.*
 import org.slf4j.LoggerFactory
 import tv.blademaker.internal.CredentialsManager
 import tv.blademaker.request.Request
-import tv.blademaker.services.AlbumService
+import tv.blademaker.services.*
 import java.io.Closeable
 import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
@@ -63,7 +63,12 @@ class Kotify(
         }
     }
 
-    val albums = AlbumService(this)
+    val albums: AlbumsService = Service.of(this)
+    val artists: ArtistsService = Service.of(this)
+    val episodes: EpisodesService = Service.of(this)
+    val playlists: PlaylistsService = Service.of(this)
+    val shows: ShowsService = Service.of(this)
+    val tracks: TracksService = Service.of(this)
 
     init {
         @Suppress("EXPERIMENTAL_API_USAGE")
