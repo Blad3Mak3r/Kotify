@@ -12,6 +12,6 @@ data class AuthorizationResponse(
     @SerialName("expires_in") val expiresIn: Long
 ) {
 
-    val expiresAt = System.currentTimeMillis() + expiresIn * 1000
+    val expiresAt = System.currentTimeMillis() + (expiresIn * 1000)
 
 }

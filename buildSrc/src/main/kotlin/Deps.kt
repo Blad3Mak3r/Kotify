@@ -6,6 +6,10 @@ object Deps {
     const val COROUTINES_CORE = "org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.COROUTINES}"
     const val COROUTINES_JDK8 = "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:${Versions.COROUTINES}"
     const val KOTLINX_SERIALIZATION_JSON = "org.jetbrains.kotlinx:kotlinx-serialization-json:${Versions.KOTLIN_SERIALIZATION}"
+
+    const val SLF4J_API = "org.slf4j:slf4j-api:${Versions.SLF4J_API}"
+
+    const val LOGBACK = "ch.qos.logback:logback-classic:${Versions.LOGBACK}"
 }
 
 object Versions {
@@ -13,6 +17,8 @@ object Versions {
     const val KOTLIN = "1.6.10"
     const val KOTLIN_SERIALIZATION = "1.3.1"
     const val KTOR = "1.6.6"
+    const val SLF4J_API = "1.7.32"
+    const val LOGBACK = "1.2.7"
 }
 
 data class Version(

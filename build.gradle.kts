@@ -20,5 +20,8 @@ dependencies {
     implementation(Deps.COROUTINES_JDK8)
     implementation(Deps.KOTLINX_SERIALIZATION_JSON)
 
+    api(Deps.SLF4J_API)
+
     testImplementation("junit:junit:4.13.2")
+    testImplementation(Deps.LOGBACK)
 }
