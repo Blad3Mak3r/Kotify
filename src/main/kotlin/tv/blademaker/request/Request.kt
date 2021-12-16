@@ -10,6 +10,8 @@ import kotlinx.coroutines.*
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.json.Json
 import tv.blademaker.Kotify
+import tv.blademaker.exceptions.ErrorHolder
+import tv.blademaker.exceptions.KotifyRequestException
 import java.util.concurrent.atomic.AtomicReference
 
 class Request<T : Any>(requestBuilder: Builder<T>.() -> Unit) {
@@ -66,17 +68,20 @@ class Request<T : Any>(requestBuilder: Builder<T>.() -> Unit) {
             val status = ex.response.status.value
             val retryAfter = ex.response.headers["retry-after"]
 
-            if (status == 429) {
-                Kotify.log.warn("Encountered 429 on request ${this@Request} with retry-after header of $retryAfter seconds.")
-                val retryAfterValue = retryAfter?.toIntOrNull()
-                retryAfterValue?.let {
-                    kotify.retryAfter = (it * 1000L + 1200L)
+            when (status) {
+                429 -> {
+                    Kotify.log.warn("Encountered 429 on request ${this@Request} with retry-after header of $retryAfter seconds.")
+                    val retryAfterValue = retryAfter?.toIntOrNull()
+                    retryAfterValue?.let {
+                        kotify.retryAfter = (it * 1000L + 1200L)
+                    }
+                    kotify.enqueueFirst(this@Request)
+                    return@coroutineScope false
                 }
-                kotify.enqueueFirst(this@Request)
-                return@coroutineScope false
+                else -> KotifyRequestException.complete(deferred, ex)
             }
 
-            deferred.completeExceptionally(ex)
+
         }
 
         return@coroutineScope true
