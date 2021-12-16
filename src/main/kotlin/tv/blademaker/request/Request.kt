@@ -42,7 +42,7 @@ class Request<T : Any>(requestBuilder: Builder<T>.() -> Unit) {
         return deferred.await()
     }
 
-    suspend fun queueAsync(kotify: Kotify): Deferred<T> {
+    fun queueAsync(kotify: Kotify): Deferred<T> {
         kotify.enqueue(this)
 
         return deferred
