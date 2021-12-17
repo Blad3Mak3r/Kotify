@@ -10,17 +10,18 @@ import kotlinx.coroutines.*
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.json.Json
 import tv.blademaker.Kotify
-import tv.blademaker.exceptions.ErrorHolder
 import tv.blademaker.exceptions.KotifyRequestException
 import java.util.concurrent.atomic.AtomicReference
 
-class Request<T : Any>(requestBuilder: Builder<T>.() -> Unit) {
+class Request<T : Any>(
+    private val serializer: KSerializer<T>,
+    requestBuilder: Builder<T>.() -> Unit
+) {
 
     private val baseUrl: String
     private val path: String
     val method: HttpMethod
     val url: String
-    private val serializer: KSerializer<T>
 
     private val deferred = CompletableDeferred<T>()
 
@@ -33,7 +34,6 @@ class Request<T : Any>(requestBuilder: Builder<T>.() -> Unit) {
         path = builder.path
         method = builder.method
         url = baseUrl + path
-        serializer = builder.serializer!!
     }
 
     suspend fun queue(kotify: Kotify): T {

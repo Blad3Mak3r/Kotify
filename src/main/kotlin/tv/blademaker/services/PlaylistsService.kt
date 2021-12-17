@@ -9,14 +9,16 @@ import java.util.concurrent.atomic.AtomicReference
 
 class PlaylistsService(override val kotify: Kotify) : Service {
 
-    suspend fun get(id: String): Playlist = request {
-        path = "/v1/playlists/$id"
-        serializer = Playlist.serializer()
+    suspend fun get(id: String): Playlist {
+        return request(Playlist.serializer()) {
+            path = "/v1/playlists/$id"
+        }
     }
 
-    private suspend fun fetchTracksPage(id: String, limit: Int, offset: Int): TracksPaginator = request {
-        path = "/v1/playlists/$id/tracks?offset=$offset&limit=$limit"
-        serializer = TracksPaginator.serializer()
+    private suspend fun fetchTracksPage(id: String, limit: Int, offset: Int): TracksPaginator {
+        return request(TracksPaginator.serializer()) {
+            path = "/v1/playlists/$id/tracks?offset=$offset&limit=$limit"
+        }
     }
 
     suspend fun fetchAllTracks(playlist: Playlist): List<Track> = coroutineScope {

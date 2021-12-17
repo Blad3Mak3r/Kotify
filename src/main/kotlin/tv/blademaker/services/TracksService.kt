@@ -5,9 +5,9 @@ import tv.blademaker.models.Track
 
 class TracksService(override val kotify: Kotify) : Service {
 
-    suspend fun get(id: String): Track = request {
-        path = "/v1/tracks/$id"
-        serializer = Track.serializer()
+    suspend fun get(id: String): Track {
+        return request(Track.serializer()) {
+            path = "/v1/tracks/$id"
+        }
     }
-
 }
