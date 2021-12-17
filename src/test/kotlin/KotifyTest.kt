@@ -1,15 +1,10 @@
 import io.ktor.client.features.*
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
-import kotlinx.serialization.json.Json
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import tv.blademaker.Kotify
 import tv.blademaker.exceptions.KotifyRequestException
-import tv.blademaker.models.Album
-import tv.blademaker.models.Playlist
 
 class KotifyTest {
 
@@ -85,7 +80,7 @@ class KotifyTest {
             "not equal ids"
         }
 
-        val tracks = kotify.playlists.fetchAllTracks(playlist)
+        val tracks = kotify.playlists.retrieveAllTracks(playlist)
 
         assert(tracks.size == totalExpected) {
             "received a total of ${tracks.size} but required is $totalExpected"

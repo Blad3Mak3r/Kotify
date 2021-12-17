@@ -21,7 +21,7 @@ class PlaylistsService(override val kotify: Kotify) : Service {
         }
     }
 
-    suspend fun fetchAllTracks(playlist: Playlist): List<Track> = coroutineScope {
+    suspend fun retrieveAllTracks(playlist: Playlist): List<Track> = coroutineScope {
         val tracks = mutableListOf<Track>()
         val paginator = playlist.tracks
         tracks.addAll(paginator.items.filter { !it.isLocal }.map { it.track })
