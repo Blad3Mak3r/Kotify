@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "tv.blademaker"
-val versionObj = Version(0, 1, 0)
+val versionObj = Version(0, 2, 0)
 version = versionObj.toString()
 
 repositories {
