@@ -4,7 +4,7 @@ import kotlinx.coroutines.coroutineScope
 import tv.blademaker.kotify.Kotify
 import tv.blademaker.kotify.models.Playlist
 import tv.blademaker.kotify.models.Track
-import tv.blademaker.kotify.models.TracksPaginator
+import tv.blademaker.kotify.models.PlaylistPagination
 import tv.blademaker.kotify.request.RequestConfiguration
 
 class PlaylistsService(override val kotify: Kotify) : Service {
@@ -23,8 +23,8 @@ class PlaylistsService(override val kotify: Kotify) : Service {
         limit: Int,
         offset: Int,
         configuration: RequestConfiguration.() -> Unit = {}
-    ): TracksPaginator {
-        return request(TracksPaginator.serializer(), {
+    ): PlaylistPagination {
+        return request(PlaylistPagination.serializer(), {
             path = "/v1/playlists/$id/tracks?offset=$offset&limit=$limit"
         }, configuration)
     }

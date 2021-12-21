@@ -4,7 +4,7 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import tv.blademaker.kotify.Kotify
-import tv.blademaker.exceptions.KotifyRequestException
+import tv.blademaker.kotify.exceptions.KotifyRequestException
 
 class KotifyTest {
 
@@ -13,11 +13,11 @@ class KotifyTest {
     private val invalidAlbumID = "0a70673Gb7q0uqWyoCRy4J1234"
     private val notFoundAlbumID = "0a70073Gb7q0uqWyoCRy4J"
 
-    private lateinit var kotify: tv.blademaker.kotify.Kotify
+    private lateinit var kotify: Kotify
 
     @Before
     fun setClient() {
-        kotify = tv.blademaker.kotify.Kotify(
+        kotify = Kotify(
             clientID = System.getenv("CLIENT_ID"),
             clientSecret = System.getenv("CLIENT_SECRET")
         )

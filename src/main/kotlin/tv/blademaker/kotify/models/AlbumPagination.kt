@@ -1,13 +1,12 @@
 package tv.blademaker.kotify.models
 
 import io.ktor.http.*
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class TracksPaginator(
+data class AlbumPagination(
     val href: String,
-    val items: List<Item>,
+    val items: List<Track>,
     val limit: Int,
     val next: String? = null,
     val offset: Int? = null,
@@ -17,22 +16,13 @@ data class TracksPaginator(
     val nextValues: NextValues? = nextValues(this)
 
     @Serializable
-    data class Item(
-        @SerialName("added_at") val addedAt: String,
-        @SerialName("added_by") val addedBy: User,
-        @SerialName("is_local") val isLocal: Boolean,
-        @SerialName("primary_color") val primaryColor: String? = null,
-        val track: Track
-    )
-
-    @Serializable
     data class NextValues(
         val offset: Int,
         val limit: Int
     )
 
     companion object {
-        private fun nextValues(paginator: TracksPaginator): NextValues? {
+        private fun nextValues(paginator: AlbumPagination): NextValues? {
             val next = paginator.next ?: return null
 
             val url = Url(next)

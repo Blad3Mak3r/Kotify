@@ -18,7 +18,7 @@ data class Album(
     val restrictions: Restrictions? = null,
     val uri: String,
     val artist: List<Artist>? = null,
-    val tracks: TracksPaginator
+    val tracks: AlbumPagination
 )
 
 @Serializable

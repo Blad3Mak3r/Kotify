@@ -1,7 +1,6 @@
 package tv.blademaker.kotify.services
 
 import tv.blademaker.kotify.Kotify
-import tv.blademaker.kotify.models.TracksPaginator
 import tv.blademaker.kotify.models.User
 import tv.blademaker.kotify.request.RequestConfiguration
 

@@ -15,7 +15,7 @@ data class Playlist(
     val images: List<Image>,
     val owner: Owner,
     val public: Boolean,
-    val tracks: TracksPaginator,
+    val tracks: PlaylistPagination,
     val type: String,
     val uri: String
 ) {

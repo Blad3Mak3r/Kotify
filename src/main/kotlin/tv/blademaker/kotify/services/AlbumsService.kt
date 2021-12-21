@@ -4,7 +4,7 @@ import kotlinx.coroutines.Deferred
 import kotlinx.serialization.builtins.ListSerializer
 import tv.blademaker.kotify.Kotify
 import tv.blademaker.kotify.models.Album
-import tv.blademaker.kotify.models.TracksPaginator
+import tv.blademaker.kotify.models.AlbumPagination
 import tv.blademaker.kotify.request.RequestConfiguration
 
 class AlbumsService(override val kotify: Kotify) : Service {
@@ -43,8 +43,8 @@ class AlbumsService(override val kotify: Kotify) : Service {
         offset: Int = 0,
         market: String? = null,
         configuration: RequestConfiguration.() -> Unit = {}
-    ): TracksPaginator {
-        return request(TracksPaginator.serializer(), {
+    ): AlbumPagination {
+        return request(AlbumPagination.serializer(), {
             path = "/v1/albums/$id/tracks?limit=$limit&offset=$offset" + if (market != null) "&=market$market" else ""
         }, configuration)
     }
