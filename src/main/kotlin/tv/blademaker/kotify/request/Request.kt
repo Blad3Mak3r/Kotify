@@ -54,7 +54,7 @@ internal class Request<T : Any>(
 
     suspend fun execute(kotify: Kotify): Boolean = coroutineScope {
         try {
-            val auth = kotify.credentials.getAccessToken()
+            val auth = accessToken ?: kotify.credentials.getAccessToken()
 
             val response = kotify.httpClient.request<HttpResponse> {
                 url(this@Request.url)
