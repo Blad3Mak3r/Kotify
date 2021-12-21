@@ -9,7 +9,7 @@ data class Track(
     val name: String,
     val album: PartialAlbum? = null,
     val artists: List<Artist>,
-    @SerialName("available_markets") val availableMarkets: List<String>,
+    @SerialName("available_markets") val availableMarkets: List<String>? = null,
     @SerialName("disc_number") val discNumber: Int = 1,
     @SerialName("duration_ms") val durationMillis: Long,
     val explicit: Boolean,
@@ -24,6 +24,9 @@ data class Track(
     val uri: String,
     @SerialName("is_local") val isLocal: Boolean
 ) {
+
+    val openUrl: String
+        get() = "https://open.spotify.com/track/$id"
 
     @Serializable
     data class ExternalIds(
