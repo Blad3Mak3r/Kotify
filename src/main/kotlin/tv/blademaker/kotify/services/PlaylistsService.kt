@@ -3,8 +3,8 @@ package tv.blademaker.kotify.services
 import kotlinx.coroutines.coroutineScope
 import tv.blademaker.kotify.Kotify
 import tv.blademaker.kotify.models.Playlist
-import tv.blademaker.kotify.models.Track
 import tv.blademaker.kotify.models.PlaylistPagination
+import tv.blademaker.kotify.models.Track
 import tv.blademaker.kotify.request.RequestConfiguration
 
 class PlaylistsService(override val kotify: Kotify) : Service {

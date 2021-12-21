@@ -3,10 +3,11 @@ package tv.blademaker.kotify.request
 import io.ktor.client.call.*
 import io.ktor.client.features.*
 import io.ktor.client.request.*
-import io.ktor.client.request.request
 import io.ktor.client.statement.*
 import io.ktor.http.*
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.coroutineScope
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.json.Json
 import tv.blademaker.kotify.Kotify

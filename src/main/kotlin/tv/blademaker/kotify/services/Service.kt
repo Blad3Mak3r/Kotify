@@ -12,8 +12,8 @@ interface Service {
     val kotify: Kotify
 
     companion object {
-        inline fun <reified T : Service> of(kotify: tv.blademaker.kotify.Kotify): T {
-            return T::class.java.getDeclaredConstructor(tv.blademaker.kotify.Kotify::class.java).newInstance(kotify)
+        inline fun <reified T : Service> of(kotify: Kotify): T {
+            return T::class.java.getDeclaredConstructor(Kotify::class.java).newInstance(kotify)
         }
     }
 }

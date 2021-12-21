@@ -5,7 +5,6 @@ import io.ktor.client.features.*
 import io.ktor.client.statement.*
 import io.ktor.util.*
 import kotlinx.coroutines.CompletableDeferred
-import kotlinx.coroutines.Deferred
 
 class KotifyRequestException(
     response: HttpResponse,
