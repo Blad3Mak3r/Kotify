@@ -12,10 +12,10 @@ import java.util.concurrent.atomic.AtomicReference
 
 class CredentialsManager internal constructor(
     private val kotify: Kotify,
-    private val clientId: String,
-    private val clientSecret: String
+    internal val clientId: String,
+    clientSecret: String
 ){
-    private val basicAuthHeader = "Basic ${Base64.getEncoder().encodeToString("$clientId:$clientSecret".toByteArray())}"
+    internal val basicAuthHeader = "Basic ${Base64.getEncoder().encodeToString("$clientId:$clientSecret".toByteArray())}"
 
     private val accessTokenRef = AtomicReference<String>(null)
 
@@ -30,7 +30,7 @@ class CredentialsManager internal constructor(
     internal suspend fun getAccessToken(): String {
         val ref = accessTokenRef.get()
         if (ref == null || isExpired) {
-            if (isExpired) tv.blademaker.kotify.Kotify.log.debug("Token expired.")
+            if (isExpired) Kotify.log.debug("Token expired.")
             updateAccessToken()
         }
         return accessTokenRef.get()
@@ -43,8 +43,8 @@ class CredentialsManager internal constructor(
     }
 
     private suspend fun retrieveAccessToken(): AuthorizationResponse {
-        tv.blademaker.kotify.Kotify.log.info("Retrieving new access token for client $clientId.")
-        val response = kotify.httpClient.request<HttpResponse> {
+        Kotify.log.info("Retrieving new access token for client $clientId.")
+        val response = kotify.httpClient.request {
             method = HttpMethod.Post
             url("https://accounts.spotify.com/api/token?grant_type=client_credentials")
             headers {
@@ -53,7 +53,7 @@ class CredentialsManager internal constructor(
             }
         }
 
-        return response.receive()
+        return response.body()
     }
 
 }

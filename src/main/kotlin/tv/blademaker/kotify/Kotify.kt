@@ -2,8 +2,8 @@ package tv.blademaker.kotify
 
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
-import io.ktor.client.features.json.*
-import io.ktor.client.features.json.serializer.*
+import io.ktor.client.plugins.*
+import io.ktor.serialization.kotlinx.json.*
 import kotlinx.coroutines.*
 import org.slf4j.LoggerFactory
 import tv.blademaker.kotify.internal.CredentialsManager
@@ -34,12 +34,12 @@ class Kotify(
     internal var retryAfter: Long
         get() = retryAfterRef.get()
         set(value) {
-            tv.blademaker.kotify.Kotify.Companion.log.debug("Adding a retry after of ${value}ms.")
+            log.debug("Adding a retry after of ${value}ms.")
             retryAfterRef.set(System.currentTimeMillis() + value)
         }
 
     init {
-        tv.blademaker.kotify.Kotify.Companion.baseUrl = baseUrl
+        Companion.baseUrl = baseUrl
     }
 
 
@@ -58,8 +58,8 @@ class Kotify(
 
     @PublishedApi
     internal val httpClient = HttpClient(CIO) {
-        install(JsonFeature) {
-            serializer = KotlinxSerializer()
+        install(ContentNegotiation) {
+            json()
         }
     }
 

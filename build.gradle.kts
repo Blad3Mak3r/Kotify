@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "tv.blademaker"
-val versionObj = Version(0, 2, 0)
+val versionObj = Version(0, 3, 0)
 version = versionObj.toString()
 
 repositories {
@@ -22,7 +22,8 @@ dependencies {
 
     implementation(Deps.KTOR_CLIENT_CORE)
     implementation(Deps.KTOR_CLIENT_CIO)
-    implementation(Deps.KTOR_CLIENT_SERIALIZATION)
+    implementation(Deps.KTOR_CLIENT_CONTENT_NEGOTIATION)
+    implementation(Deps.KTOR_SERIALIZATION_JSON)
     implementation(Deps.COROUTINES_CORE)
     implementation(Deps.COROUTINES_JDK8)
     implementation(Deps.KOTLINX_SERIALIZATION_JSON)

@@ -1,7 +1,8 @@
 object Deps {
     const val KTOR_CLIENT_CORE = "io.ktor:ktor-client-core:${Versions.KTOR}"
     const val KTOR_CLIENT_CIO = "io.ktor:ktor-client-cio:${Versions.KTOR}"
-    const val KTOR_CLIENT_SERIALIZATION = "io.ktor:ktor-client-serialization:${Versions.KTOR}"
+    const val KTOR_CLIENT_CONTENT_NEGOTIATION = "io.ktor:ktor-client-content-negotiation:${Versions.KTOR}"
+    const val KTOR_SERIALIZATION_JSON = "io.ktor:ktor-serialization-kotlinx-json:${Versions.KTOR}"
 
     const val COROUTINES_CORE = "org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.COROUTINES}"
     const val COROUTINES_JDK8 = "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:${Versions.COROUTINES}"
@@ -16,7 +17,7 @@ object Versions {
     const val COROUTINES = "1.5.2"
     const val KOTLIN = "1.6.10"
     const val KOTLIN_SERIALIZATION = "1.3.1"
-    const val KTOR = "1.6.6"
+    const val KTOR = "2.0.0-beta-1"
     const val SLF4J_API = "1.7.32"
     const val LOGBACK = "1.2.7"
 }

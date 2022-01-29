@@ -1,7 +1,7 @@
 package tv.blademaker.kotify.exceptions
 
 import io.ktor.client.call.*
-import io.ktor.client.features.*
+import io.ktor.client.plugins.*
 import io.ktor.client.statement.*
 import io.ktor.util.*
 import kotlinx.coroutines.CompletableDeferred
@@ -24,7 +24,7 @@ class KotifyRequestException(
         }
 
         private suspend fun from(ex: ClientRequestException): KotifyRequestException {
-            val error = ex.response.receive<ErrorHolder>().error
+            val error = ex.response.body<ErrorHolder>().error
 
             return KotifyRequestException(ex.response, error)
         }

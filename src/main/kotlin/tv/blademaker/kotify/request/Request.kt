@@ -1,7 +1,7 @@
 package tv.blademaker.kotify.request
 
 import io.ktor.client.call.*
-import io.ktor.client.features.*
+import io.ktor.client.plugins.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
@@ -57,7 +57,7 @@ internal class Request<T : Any>(
         try {
             val auth = accessToken ?: kotify.credentials.getAccessToken()
 
-            val response = kotify.httpClient.request<HttpResponse> {
+            val response = kotify.httpClient.request {
                 url(this@Request.url)
                 method = this@Request.method
                 headers {
@@ -65,7 +65,7 @@ internal class Request<T : Any>(
                 }
             }
 
-            val content = json.decodeFromString(serializer, response.receive())
+            val content = json.decodeFromString(serializer, response.bodyAsText())
             deferred.complete(content)
         } catch (ex: ClientRequestException) {
             val status = ex.response.status.value
@@ -104,6 +104,8 @@ internal class Request<T : Any>(
         var baseUrl: String = Kotify.baseUrl
         var path: String = ""
         var method: HttpMethod = HttpMethod.Get
+        var body: Any? = null
+        val headers = HeadersBuilder()
     }
 
     companion object {

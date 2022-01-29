@@ -1,4 +1,4 @@
-import io.ktor.client.features.*
+import io.ktor.client.plugins.*
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
