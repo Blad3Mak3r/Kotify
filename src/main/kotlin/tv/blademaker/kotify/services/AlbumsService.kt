@@ -1,6 +1,5 @@
 package tv.blademaker.kotify.services
 
-import kotlinx.coroutines.Deferred
 import kotlinx.serialization.builtins.ListSerializer
 import tv.blademaker.kotify.Kotify
 import tv.blademaker.kotify.models.Album
@@ -14,15 +13,6 @@ class AlbumsService(override val kotify: Kotify) : Service {
         configuration: RequestConfiguration.() -> Unit = {}
     ): Album {
         return request(Album.serializer(), {
-            path = "/v1/albums/$id"
-        }, configuration)
-    }
-
-    suspend fun getAsync(
-        id: String,
-        configuration: RequestConfiguration.() -> Unit = {}
-    ): Deferred<Album> {
-        return requestAsync(Album.serializer(), {
             path = "/v1/albums/$id"
         }, configuration)
     }

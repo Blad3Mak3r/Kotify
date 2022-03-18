@@ -1,11 +1,11 @@
 package tv.blademaker.kotify.exceptions
 
-import io.ktor.client.call.*
 import io.ktor.client.plugins.*
 import io.ktor.client.statement.*
 import io.ktor.util.*
 import kotlinx.coroutines.CompletableDeferred
 
+@Suppress("unused", "MemberVisibilityCanBePrivate")
 class KotifyRequestException(
     response: HttpResponse,
     val error: String
@@ -23,7 +23,7 @@ class KotifyRequestException(
             deferred.completeExceptionally(from(ex))
         }
 
-        private suspend fun from(ex: ClientRequestException): KotifyRequestException {
+        suspend fun from(ex: ClientRequestException): KotifyRequestException {
             val error = ex.response.bodyAsText()
 
             return KotifyRequestException(ex.response, error)

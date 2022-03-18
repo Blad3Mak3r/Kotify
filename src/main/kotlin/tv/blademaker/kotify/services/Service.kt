@@ -1,6 +1,5 @@
 package tv.blademaker.kotify.services
 
-import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.KSerializer
@@ -23,7 +22,7 @@ internal suspend fun <T : Any> Service.request(
     builder: Request.Builder.() -> Unit,
     config: RequestConfiguration
 ): T = withContext(Dispatchers.IO) {
-    Request(serializer, builder, config).queue(kotify)
+    Request(serializer, builder, config).execute(kotify)
 }
 
 internal suspend fun <T : Any> Service.request(
@@ -31,21 +30,5 @@ internal suspend fun <T : Any> Service.request(
     builder: Request.Builder.() -> Unit,
     config: RequestConfiguration.() -> Unit
 ): T = withContext(Dispatchers.IO) {
-    Request(serializer, builder, RequestConfiguration().apply(config)).queue(kotify)
-}
-
-internal suspend fun <T : Any> Service.requestAsync(
-    serializer: KSerializer<T>,
-    builder: Request.Builder.() -> Unit,
-    config: RequestConfiguration
-): Deferred<T> = withContext(Dispatchers.IO) {
-    Request(serializer, builder, config).queueAsync(kotify)
-}
-
-internal suspend fun <T : Any> Service.requestAsync(
-    serializer: KSerializer<T>,
-    builder: Request.Builder.() -> Unit,
-    config: RequestConfiguration.() -> Unit
-): Deferred<T> = withContext(Dispatchers.IO) {
-    Request(serializer, builder, RequestConfiguration().apply(config)).queueAsync(kotify)
+    Request(serializer, builder, RequestConfiguration().apply(config)).execute(kotify)
 }

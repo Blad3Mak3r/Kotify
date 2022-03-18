@@ -1,13 +1,10 @@
 package tv.blademaker.kotify.request
 
-import io.ktor.client.call.*
 import io.ktor.client.plugins.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
-import kotlinx.coroutines.CompletableDeferred
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.*
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.json.Json
 import tv.blademaker.kotify.Kotify
@@ -40,19 +37,11 @@ internal class Request<T : Any>(
         url = baseUrl + path
     }
 
-    suspend fun queue(kotify: Kotify): T {
-        kotify.enqueue(this)
+    suspend fun executeAsync(kotify: Kotify): Deferred<T> = coroutineScope { async { execute(kotify) } }
 
-        return deferred.await()
-    }
+    suspend fun execute(kotify: Kotify): T = coroutineScope {
+        kotify.getDelay?.let { delay(it) }
 
-    fun queueAsync(kotify: Kotify): Deferred<T> {
-        kotify.enqueue(this)
-
-        return deferred
-    }
-
-    suspend fun execute(kotify: Kotify): Boolean = coroutineScope {
         try {
             val auth = accessToken ?: kotify.credentials.getAccessToken()
 
@@ -65,8 +54,7 @@ internal class Request<T : Any>(
                 }
             }
 
-            val content = json.decodeFromString(serializer, response.bodyAsText())
-            deferred.complete(content)
+            json.decodeFromString(serializer, response.bodyAsText())
         } catch (ex: ClientRequestException) {
             val status = ex.response.status.value
             val retryAfter = ex.response.headers["retry-after"]
@@ -78,18 +66,17 @@ internal class Request<T : Any>(
                     retryAfterValue?.let {
                         kotify.retryAfter = (it * 1000L + 1200L)
                     }
-                    kotify.enqueueFirst(this@Request)
-                    return@coroutineScope false
+                    return@coroutineScope execute(kotify)
                 }
-                else -> KotifyRequestException.complete(deferred, ex)
+                else -> {
+                    Kotify.log.error("Handled exception executing request ${this@Request}: ${ex.message}", ex)
+                    throw KotifyRequestException.from(ex)
+                }
             }
 
         } catch (e: Exception) {
-            Kotify.log.error("Handled exception executing request ${this@Request}: ${e.message}", e)
-            deferred.completeExceptionally(e)
+            throw e
         }
-
-        return@coroutineScope true
     }
 
     fun cancel() {
@@ -100,6 +87,7 @@ internal class Request<T : Any>(
         return "[${method.value}] -> (${url})"
     }
 
+    @Suppress("unused")
     internal class Builder {
         var baseUrl: String = Kotify.baseUrl
         var path: String = ""

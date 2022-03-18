@@ -8,7 +8,6 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import tv.blademaker.kotify.Kotify
 import tv.blademaker.kotify.models.AuthorizationResponse
-import tv.blademaker.kotify.services.request
 
 class AuthorizationService(override val kotify: Kotify) : Service {
 

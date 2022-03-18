@@ -4,7 +4,6 @@ import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.*
 import io.ktor.serialization.kotlinx.json.*
-import kotlinx.coroutines.*
 import kotlinx.serialization.json.Json
 import org.slf4j.LoggerFactory
 import tv.blademaker.kotify.internal.CredentialsManager
@@ -15,6 +14,7 @@ import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicLong
 
+@Suppress("unused")
 class Kotify(
     clientID: String,
     clientSecret: String,
@@ -23,12 +23,6 @@ class Kotify(
 
     internal val credentials = CredentialsManager(this, clientID, clientSecret)
 
-    @Suppress("EXPERIMENTAL_API_USAGE")
-    private val queueThread = newSingleThreadContext("kotify-queue-worker")
-
-    @Suppress("EXPERIMENTAL_API_USAGE")
-    private val runner = newSingleThreadContext("kotify-runner-worker")
-    private val parentJob = SupervisorJob()
     private val run = AtomicBoolean(true)
     private val retryAfterRef = AtomicLong(-1L)
 
@@ -44,7 +38,7 @@ class Kotify(
     }
 
 
-    private val getDelay: Long
+    internal val getDelay: Long?
         get() {
             val retryAfter = retryAfterRef.get()
 
@@ -54,7 +48,7 @@ class Kotify(
             if (retryAfter != -1L)
                 retryAfterRef.set(-1L)
 
-            return 0L
+            return null
         }
 
     @PublishedApi
@@ -106,27 +100,6 @@ class Kotify(
      * User service.
      */
     val user: UsersService = Service.of(this)
-
-    init {
-        @Suppress("EXPERIMENTAL_API_USAGE")
-        CoroutineScope(queueThread + parentJob).launch {
-            runQueue()
-        }
-    }
-
-    private suspend fun runQueue() = coroutineScope {
-        while (run.get()) {
-            val request = queue.poll() ?: continue
-
-            log.debug("Executing request $request")
-            val done = request.execute(this@Kotify)
-            if (done) log.debug("Finished request $request")
-
-            val delayMs = getDelay
-            if (delayMs >=1L) log.debug("Waiting for ${delayMs}ms to execute next request.")
-            delay(delayMs)
-        }
-    }
 
     private val queue = LinkedList<Request<*>>()
 

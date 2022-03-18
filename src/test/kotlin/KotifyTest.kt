@@ -1,11 +1,7 @@
 import io.ktor.client.plugins.*
 import kotlinx.coroutines.runBlocking
-import org.junit.After
-import org.junit.Before
 import org.junit.FixMethodOrder
 import org.junit.Test
-import org.junit.runner.OrderWith
-import org.junit.runner.manipulation.Ordering
 import org.junit.runners.MethodSorters
 import tv.blademaker.kotify.Kotify
 import tv.blademaker.kotify.exceptions.KotifyRequestException
