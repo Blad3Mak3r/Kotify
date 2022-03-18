@@ -21,9 +21,25 @@ interface Service {
 internal suspend fun <T : Any> Service.request(
     serializer: KSerializer<T>,
     builder: Request.Builder.() -> Unit,
-    config: RequestConfiguration.() -> Unit
+    config: RequestConfiguration
 ): T = withContext(Dispatchers.IO) {
     Request(serializer, builder, config).queue(kotify)
+}
+
+internal suspend fun <T : Any> Service.request(
+    serializer: KSerializer<T>,
+    builder: Request.Builder.() -> Unit,
+    config: RequestConfiguration.() -> Unit
+): T = withContext(Dispatchers.IO) {
+    Request(serializer, builder, RequestConfiguration().apply(config)).queue(kotify)
+}
+
+internal suspend fun <T : Any> Service.requestAsync(
+    serializer: KSerializer<T>,
+    builder: Request.Builder.() -> Unit,
+    config: RequestConfiguration
+): Deferred<T> = withContext(Dispatchers.IO) {
+    Request(serializer, builder, config).queueAsync(kotify)
 }
 
 internal suspend fun <T : Any> Service.requestAsync(
@@ -31,5 +47,5 @@ internal suspend fun <T : Any> Service.requestAsync(
     builder: Request.Builder.() -> Unit,
     config: RequestConfiguration.() -> Unit
 ): Deferred<T> = withContext(Dispatchers.IO) {
-    Request(serializer, builder, config).queueAsync(kotify)
+    Request(serializer, builder, RequestConfiguration().apply(config)).queueAsync(kotify)
 }

@@ -17,7 +17,7 @@ import java.util.concurrent.atomic.AtomicReference
 internal class Request<T : Any>(
     private val serializer: KSerializer<T>,
     requestBuilder: Builder.() -> Unit,
-    requestConfiguration: RequestConfiguration.() -> Unit
+    config: RequestConfiguration
 ) {
 
     private val accessToken: String?
@@ -32,7 +32,6 @@ internal class Request<T : Any>(
 
     init {
         val builder = Builder().apply(requestBuilder)
-        val config = RequestConfiguration().apply(requestConfiguration)
 
         accessToken = config.accessToken
         baseUrl = builder.baseUrl

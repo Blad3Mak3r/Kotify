@@ -16,7 +16,7 @@ import java.util.concurrent.atomic.AtomicReference
 class CredentialsManager internal constructor(
     private val kotify: Kotify,
     internal val clientId: String,
-    clientSecret: String
+    internal val clientSecret: String
 ){
     internal val basicAuthHeader = "Basic ${Base64.getEncoder().encodeToString("$clientId:$clientSecret".toByteArray())}"
 

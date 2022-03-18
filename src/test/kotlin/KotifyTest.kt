@@ -71,6 +71,29 @@ class KotifyTest {
     }
 
     @Test
+    fun `Test User Top Tracks`() = runBlocking {
+        val accessToken = System.getenv("ACCOUNT_ACCESS_TOKEN")
+
+        val savedTracks = kotify.tracks.getUserSavedTracks(accessToken)
+
+        assert(savedTracks.items.isNotEmpty())
+
+        println(savedTracks)
+
+        val topTracks = kotify.user.getTopTracks(accessToken)
+
+        assert(topTracks.items.isNotEmpty())
+
+        println(topTracks)
+
+        val topArtists = kotify.user.getTopArtists(accessToken)
+
+        assert(topArtists.items.isNotEmpty())
+
+        println(topArtists)
+    }
+
+    @Test
     fun `Test playlist`() = runBlocking {
         val id = /* "2J0TRU2EDG29qlmxdGa4xa" */ "3ubLYWqCIpRW06a7kRIInC"
 

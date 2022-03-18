@@ -6,16 +6,20 @@ import tv.blademaker.kotify.request.RequestConfiguration
 
 class UsersService(override val kotify: Kotify) : Service {
 
-    suspend fun getTopTracks(configuration: RequestConfiguration.() -> Unit): User.TopTracks {
+    suspend fun getTopTracks(accessToken: String, configuration: RequestConfiguration.() -> Unit = {}): User.TopTracks {
         return request(User.TopTracks.serializer(), {
             path = "/v1/me/top/tracks"
-        }, configuration)
+        }, RequestConfiguration().apply(configuration).apply {
+            this.accessToken = accessToken
+        })
     }
 
-    suspend fun getTopArtists(configuration: RequestConfiguration.() -> Unit): User.TopArtists {
+    suspend fun getTopArtists(accessToken: String, configuration: RequestConfiguration.() -> Unit = {}): User.TopArtists {
         return request(User.TopArtists.serializer(), {
             path = "/v1/me/top/artists"
-        }, configuration)
+        }, RequestConfiguration().apply(configuration).apply {
+            this.accessToken = accessToken
+        })
     }
 
 }

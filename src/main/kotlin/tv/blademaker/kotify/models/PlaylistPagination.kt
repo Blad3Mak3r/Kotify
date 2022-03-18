@@ -19,8 +19,8 @@ data class PlaylistPagination(
     @Serializable
     data class Item(
         @SerialName("added_at") val addedAt: String,
-        @SerialName("added_by") val addedBy: User,
-        @SerialName("is_local") val isLocal: Boolean,
+        @SerialName("added_by") val addedBy: User? = null,
+        @SerialName("is_local") val isLocal: Boolean = false,
         @SerialName("primary_color") val primaryColor: String? = null,
         val track: Track
     )
