@@ -5,6 +5,7 @@ import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.coroutines.*
+import kotlinx.serialization.json.Json
 import org.slf4j.LoggerFactory
 import tv.blademaker.kotify.internal.CredentialsManager
 import tv.blademaker.kotify.request.Request
@@ -59,7 +60,10 @@ class Kotify(
     @PublishedApi
     internal val httpClient = HttpClient(CIO) {
         install(ContentNegotiation) {
-            json()
+            json(Json {
+                isLenient = true
+                ignoreUnknownKeys = true
+            })
         }
     }
 
@@ -114,12 +118,12 @@ class Kotify(
         while (run.get()) {
             val request = queue.poll() ?: continue
 
-            tv.blademaker.kotify.Kotify.Companion.log.debug("Executing request $request")
+            log.debug("Executing request $request")
             val done = request.execute(this@Kotify)
-            if (done) tv.blademaker.kotify.Kotify.Companion.log.debug("Finished request $request")
+            if (done) log.debug("Finished request $request")
 
             val delayMs = getDelay
-            if (delayMs >=1L) tv.blademaker.kotify.Kotify.Companion.log.debug("Waiting for ${delayMs}ms to execute next request.")
+            if (delayMs >=1L) log.debug("Waiting for ${delayMs}ms to execute next request.")
             delay(delayMs)
         }
     }
@@ -128,12 +132,12 @@ class Kotify(
 
     internal fun enqueue(request: Request<*>) {
         queue.addLast(request)
-        tv.blademaker.kotify.Kotify.Companion.log.debug("Added Job to queue: $request")
+        log.debug("Added Job to queue: $request")
     }
 
     internal fun enqueueFirst(request: Request<*>) {
         queue.addFirst(request)
-        tv.blademaker.kotify.Kotify.Companion.log.debug("Added Job to queue at first position: $request")
+        log.debug("Added Job to queue at first position: $request")
     }
 
     override fun close() {

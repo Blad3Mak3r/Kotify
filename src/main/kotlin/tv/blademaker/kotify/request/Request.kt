@@ -61,7 +61,8 @@ internal class Request<T : Any>(
                 url(this@Request.url)
                 method = this@Request.method
                 headers {
-                    append("authorization", "Bearer $auth")
+                    set("Authorization", "Bearer $auth")
+                    contentType(ContentType("application", "json"))
                 }
             }
 

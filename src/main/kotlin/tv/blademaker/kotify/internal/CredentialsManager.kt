@@ -2,8 +2,11 @@ package tv.blademaker.kotify.internal
 
 import io.ktor.client.call.*
 import io.ktor.client.request.*
+import io.ktor.client.request.forms.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
 import tv.blademaker.kotify.Kotify
 import tv.blademaker.kotify.models.AuthorizationResponse
 import java.util.*
@@ -44,16 +47,19 @@ class CredentialsManager internal constructor(
 
     private suspend fun retrieveAccessToken(): AuthorizationResponse {
         Kotify.log.info("Retrieving new access token for client $clientId.")
-        val response = kotify.httpClient.request {
-            method = HttpMethod.Post
-            url("https://accounts.spotify.com/api/token?grant_type=client_credentials")
+        val response = kotify.httpClient.submitForm {
+            url("https://accounts.spotify.com/api/token")
             headers {
                 append("Authorization", basicAuthHeader)
-                append("content-type", "application/x-www-form-urlencoded")
             }
+            parameter("grant_type", "client_credentials")
         }
 
-        return response.body()
+        val res = response.body<AuthorizationResponse>()
+
+        Kotify.log.info("Got new access token ${res.accessToken}")
+
+        return res
     }
 
 }

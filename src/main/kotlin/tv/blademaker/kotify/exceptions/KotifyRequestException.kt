@@ -8,7 +8,7 @@ import kotlinx.coroutines.CompletableDeferred
 
 class KotifyRequestException(
     response: HttpResponse,
-    val error: Error
+    val error: String
 ) : Exception() {
 
     val status = response.status.value
@@ -16,7 +16,7 @@ class KotifyRequestException(
 
     val headers = response.headers.toMap()
 
-    override val message: String = "${error.message} [${error.status}]"
+    override val message: String = "$status $error"
 
     companion object {
         suspend fun complete(deferred: CompletableDeferred<*>, ex: ClientRequestException) {
@@ -24,7 +24,7 @@ class KotifyRequestException(
         }
 
         private suspend fun from(ex: ClientRequestException): KotifyRequestException {
-            val error = ex.response.body<ErrorHolder>().error
+            val error = ex.response.bodyAsText()
 
             return KotifyRequestException(ex.response, error)
         }

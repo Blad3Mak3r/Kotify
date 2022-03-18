@@ -2,10 +2,15 @@ import io.ktor.client.plugins.*
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
+import org.junit.FixMethodOrder
 import org.junit.Test
+import org.junit.runner.OrderWith
+import org.junit.runner.manipulation.Ordering
+import org.junit.runners.MethodSorters
 import tv.blademaker.kotify.Kotify
 import tv.blademaker.kotify.exceptions.KotifyRequestException
 
+@FixMethodOrder(MethodSorters.DEFAULT)
 class KotifyTest {
 
 
@@ -13,11 +18,8 @@ class KotifyTest {
     private val invalidAlbumID = "0a70673Gb7q0uqWyoCRy4J1234"
     private val notFoundAlbumID = "0a70073Gb7q0uqWyoCRy4J"
 
-    private lateinit var kotify: Kotify
-
-    @Before
-    fun setClient() {
-        kotify = Kotify(
+    companion object {
+        var kotify: Kotify = Kotify(
             clientID = System.getenv("CLIENT_ID"),
             clientSecret = System.getenv("CLIENT_SECRET")
         )
@@ -56,8 +58,8 @@ class KotifyTest {
             "Not threw exception"
         }
 
-        assert(result!!.error.message == "non existing id") {
-            result.error.message
+        assert(result!!.error.contains("non existing id")) {
+            result.error
         }
     }
 
@@ -70,9 +72,9 @@ class KotifyTest {
 
     @Test
     fun `Test playlist`() = runBlocking {
-        val id = /* "2J0TRU2EDG29qlmxdGa4xa" */ "3bN65vmek1MvTlmAYTqNQ9"
+        val id = /* "2J0TRU2EDG29qlmxdGa4xa" */ "3ubLYWqCIpRW06a7kRIInC"
 
-        val totalExpected = 430
+        val totalExpected = 2
 
         val playlist = kotify.playlists.get(id)
 
@@ -85,11 +87,6 @@ class KotifyTest {
         assert(tracks.size == totalExpected) {
             "received a total of ${tracks.size} but required is $totalExpected"
         }
-    }
-
-    @After
-    fun close() {
-        kotify.close()
     }
 
 }
