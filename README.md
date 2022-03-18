@@ -52,20 +52,20 @@ Advanced coroutine-based Spotify API wrapper for Kotlin.
 ### Tracks
 - [x] Get Track. ``Used by HUGE``
 - [ ] Get Several Tracks.
-- [ ] Get User's Saved Tracks.
+- [x] Get User's Saved Tracks. ``Used by HUGE``
 - [ ] Save Tracks for Current User.
 - [ ] Remove Tracks for Current User.
 - [ ] Check User's Saved Tracks.
 - [ ] Get Track's Audio Features.
 - [ ] Get Track's Audio Analysis.
-- [ ] Get Recommendations.
+- [ ] Get Recommendations. ``Used by HUGE``
 
 ### Search
 - [ ] Search for Item.
 
 ### Users:
 - [ ] Get Current User's Profile.
-- [ ] Get User's Top Items.
+- [x] Get User's Top Items. ``Used by HUGE``
 - [ ] Get User's Profile
 - [ ] Follow Playlist.
 - [ ] Unfollow Playlist.
