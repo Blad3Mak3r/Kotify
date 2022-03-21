@@ -9,12 +9,6 @@ import tv.blademaker.kotify.request.RequestConfiguration
 
 interface Service {
     val kotify: Kotify
-
-    companion object {
-        inline fun <reified T : Service> of(kotify: Kotify): T {
-            return T::class.java.getDeclaredConstructor(Kotify::class.java).newInstance(kotify)
-        }
-    }
 }
 
 internal suspend fun <T : Any> Service.request(

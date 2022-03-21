@@ -11,9 +11,9 @@ Advanced coroutine-based Spotify API wrapper for Kotlin.
 - [ ] Better documentation.
 
 ### Authentication
-- [x] Backend Application Login.
-- [ ] User Login.
-- [ ] Token Refresh.
+- [x] Client Credentials Flow (``used to authenticate Kotify``).
+- [x] Authorization Code Flow (``used by HUGE``).
+- [x] Token Refresh (``used by HUGE``).
 
 ### Albums
 - [x] Get Album. ``Used by HUGE``

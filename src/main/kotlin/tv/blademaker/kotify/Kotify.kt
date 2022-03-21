@@ -11,7 +11,6 @@ import tv.blademaker.kotify.request.Request
 import tv.blademaker.kotify.services.*
 import java.io.Closeable
 import java.util.*
-import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicLong
 
 @Suppress("unused")
@@ -23,7 +22,6 @@ class Kotify(
 
     internal val credentials = CredentialsManager(this, clientID, clientSecret)
 
-    private val run = AtomicBoolean(true)
     private val retryAfterRef = AtomicLong(-1L)
 
     internal var retryAfter: Long
@@ -64,69 +62,98 @@ class Kotify(
     /**
      * Albums service.
      */
-    val albums: AlbumsService = Service.of(this)
+    val albums = AlbumsService(this)
 
     /**
      * Artists service.
      */
-    val artists: ArtistsService = Service.of(this)
+    val artists = ArtistsService(this)
+
+    /**
+     * Authorization service.
+     */
+    val authorization = AuthorizationService(this)
+
+    /**
+     * Categories service.
+     */
+    val categories = CategoriesService(this)
 
     /**
      * Episodes service.
      */
-    val episodes: EpisodesService = Service.of(this)
+    val episodes = EpisodesService(this)
 
     /**
      * Playlists service.
      */
-    val playlists: PlaylistsService = Service.of(this)
-
-    /**
-     * Shows service.
-     */
-    val shows: ShowsService = Service.of(this)
-
-    /**
-     * Tracks service.
-     */
-    val tracks: TracksService = Service.of(this)
+    val playlists = PlaylistsService(this)
 
     /**
      * Search service.
      */
-    val search: SearchService = Service.of(this)
+    val search = SearchService(this)
+
+    /**
+     * Shows service.
+     */
+    val shows = ShowsService(this)
+
+    /**
+     * Tracks service.
+     */
+    val tracks = TracksService(this)
 
     /**
      * User service.
      */
-    val user: UsersService = Service.of(this)
+    val user = UsersService(this)
 
     private val queue = LinkedList<Request<*>>()
 
-    internal fun enqueue(request: Request<*>) {
-        queue.addLast(request)
-        log.debug("Added Job to queue: $request")
-    }
-
-    internal fun enqueueFirst(request: Request<*>) {
-        queue.addFirst(request)
-        log.debug("Added Job to queue at first position: $request")
-    }
-
-    override fun close() {
-        run.set(false)
-
-        while (queue.isNotEmpty()) {
-            try {
-                queue.poll()?.cancel()
-            } catch (_: Exception) { }
-        }
-
-        httpClient.close()
-    }
+    override fun close() = httpClient.close()
 
     companion object {
         internal val log = LoggerFactory.getLogger("Kotify")
         internal var baseUrl: String = "https://api.spotify.com"
+    }
+
+    enum class Scope(
+        val value: String
+    ) {
+        // Images
+        UGC_IMAGE_UPLOAD("ugc-image-upload"),
+
+        // Spotify Connect
+        USER_READ_PLAYBACK_STATE("user-read-playback-state"),
+        USER_MODIFY_PLAYBACK_STATE("user-modify-playback-state"),
+        USER_READ_CURRENTLY_PLAYING("user-read-currently-playing"),
+
+        // Users
+        USER_READ_PRIVATE("user-read-private"),
+        USER_READ_EMAIL("user-read-email"),
+
+        // Follow
+        USER_FOLLOW_MODIFY("user-follow-modify"),
+        USER_FOLLOW_READ("user-follow-read"),
+
+        // Library
+        USER_LIBRARY_MODIFY("user-library-modify"),
+        USER_LIBRARY_READ("user-library-read"),
+
+        // Playback
+        STREAMING("streaming"),
+        APP_REMOTE_CONTROL("app-remote-control"),
+
+        // Listening History
+        USER_READ_PLAYBACK_POSITION("user-read-playback-position"),
+        USER_TOP_READ("user-top-read"),
+        USER_READ_RECENTLY_PLAYED("user-read-recently-played"),
+
+        // Playlists
+        PLAYLIST_MODIFY_PRIVATE("playlist-modify-private"),
+        PLAYLIST_READ_COLLABORATIVE("playlist-read-collaborative"),
+        PLAYLIST_READ_PRIVATE("playlist-read-private"),
+        PLAYLIST_MODIFY_PUBLIC("playlist-modify-public")
     }
 }
