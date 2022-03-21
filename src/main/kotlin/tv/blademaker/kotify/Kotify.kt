@@ -116,6 +116,8 @@ class Kotify(
     companion object {
         internal val log = LoggerFactory.getLogger("Kotify")
         internal var baseUrl: String = "https://api.spotify.com"
+
+        const val VERSION = "0.4.2"
     }
 
     enum class Scope(
