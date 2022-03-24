@@ -4,7 +4,6 @@ import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.client.request.forms.*
 import tv.blademaker.kotify.Kotify
-import tv.blademaker.kotify.models.AuthorizationResponse
 import java.util.*
 import java.util.concurrent.atomic.AtomicLong
 import java.util.concurrent.atomic.AtomicReference
@@ -41,7 +40,7 @@ class CredentialsManager internal constructor(
         expireStampRef.set(token.expiresAt)
     }
 
-    private suspend fun retrieveAccessToken(): AuthorizationResponse {
+    private suspend fun retrieveAccessToken(): ClientCredentials {
         Kotify.log.info("Retrieving new access token for client $clientId.")
         val response = kotify.httpClient.submitForm {
             url("https://accounts.spotify.com/api/token")
@@ -51,7 +50,7 @@ class CredentialsManager internal constructor(
             parameter("grant_type", "client_credentials")
         }
 
-        val res = response.body<AuthorizationResponse>()
+        val res = response.body<ClientCredentials>()
 
         Kotify.log.info("Got new access token ${res.accessToken}")
 
