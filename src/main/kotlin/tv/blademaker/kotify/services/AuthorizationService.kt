@@ -35,7 +35,7 @@ class AuthorizationService(override val kotify: Kotify) : Service {
      *
      * @throws tv.blademaker.kotify.exceptions.KotifyRequestException
      */
-    private suspend fun retrieveAccessToken(code: String, redirectUri: String): AuthorizationResponse {
+    suspend fun retrieveAccessToken(code: String, redirectUri: String): AuthorizationResponse {
         return kotify.httpClient.submitForm {
             url("https://accounts.spotify.com/api/token")
             headers {
@@ -58,7 +58,7 @@ class AuthorizationService(override val kotify: Kotify) : Service {
      *
      * @throws tv.blademaker.kotify.exceptions.KotifyRequestException
      */
-    private suspend fun refreshAccessToken(refreshToken: String): RefreshTokenResponse {
+    suspend fun refreshAccessToken(refreshToken: String): RefreshTokenResponse {
         return kotify.httpClient.submitForm {
             url("https://accounts.spotify.com/api/token")
             headers {
