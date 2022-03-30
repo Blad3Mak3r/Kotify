@@ -6,7 +6,7 @@ import org.junit.runners.MethodSorters
 import tv.blademaker.kotify.Kotify
 import tv.blademaker.kotify.exceptions.KotifyRequestException
 
-@FixMethodOrder(MethodSorters.DEFAULT)
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 class KotifyTest {
 
 
@@ -22,13 +22,13 @@ class KotifyTest {
     }
 
     @Test
-    fun `Get Album by ID`() = runBlocking {
+    fun `1 - Get Album by ID`() = runBlocking {
         val album = kotify.albums.get(albumID)
         assert(album.id == albumID) { "albumID not equals" }
     }
 
     @Test
-    fun `Get Album with invalid ID`() = runBlocking {
+    fun `2 - Get Album with invalid ID`() = runBlocking {
         val result = try {
             kotify.albums.get(invalidAlbumID)
             null
@@ -42,7 +42,7 @@ class KotifyTest {
     }
 
     @Test
-    fun `Get Album with not found ID`() = runBlocking {
+    fun `3 - Get Album with not found ID`() = runBlocking {
         val result = try {
             kotify.albums.get(notFoundAlbumID)
             null
@@ -60,37 +60,14 @@ class KotifyTest {
     }
 
     @Test
-    fun `Get Album tracks`() = runBlocking {
+    fun `4 - Get Album tracks`() = runBlocking {
         val expected = 12
         val tracks = kotify.albums.getTracks(albumID)
         assert(tracks.total == expected) { "not expected value" }
     }
 
     @Test
-    fun `Test User Top Tracks`() = runBlocking {
-        val accessToken = System.getenv("ACCOUNT_ACCESS_TOKEN")
-
-        val savedTracks = kotify.tracks.getUserSavedTracks(accessToken)
-
-        assert(savedTracks.items.isNotEmpty())
-
-        println(savedTracks)
-
-        val topTracks = kotify.user.getTopTracks(accessToken)
-
-        assert(topTracks.items.isNotEmpty())
-
-        println(topTracks)
-
-        val topArtists = kotify.user.getTopArtists(accessToken)
-
-        assert(topArtists.items.isNotEmpty())
-
-        println(topArtists)
-    }
-
-    @Test
-    fun `Test playlist`() = runBlocking {
+    fun `5 - Test playlist`() = runBlocking {
         val id = /* "2J0TRU2EDG29qlmxdGa4xa" */ "3ubLYWqCIpRW06a7kRIInC"
 
         val totalExpected = 2

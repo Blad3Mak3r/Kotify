@@ -1,5 +1,5 @@
 package tv.blademaker.kotify.request
 
-class RequestConfiguration {
+open class RequestConfiguration {
     var accessToken: String? = null
 }

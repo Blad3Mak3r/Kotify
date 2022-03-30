@@ -5,6 +5,8 @@ import io.ktor.client.statement.*
 import io.ktor.util.*
 import kotlinx.coroutines.CompletableDeferred
 
+class KotifyException(override val message: String?, override val cause: Throwable?) : RuntimeException()
+
 @Suppress("unused", "MemberVisibilityCanBePrivate")
 class KotifyRequestException(
     response: HttpResponse,

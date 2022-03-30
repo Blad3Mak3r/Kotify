@@ -8,6 +8,7 @@ import kotlinx.coroutines.*
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.json.Json
 import tv.blademaker.kotify.Kotify
+import tv.blademaker.kotify.exceptions.KotifyException
 import tv.blademaker.kotify.exceptions.KotifyRequestException
 import java.util.concurrent.atomic.AtomicReference
 
@@ -36,8 +37,6 @@ internal class Request<T : Any>(
         method = builder.method
         url = baseUrl + path
     }
-
-    suspend fun executeAsync(kotify: Kotify): Deferred<T> = coroutineScope { async { execute(kotify) } }
 
     suspend fun execute(kotify: Kotify): T = coroutineScope {
         kotify.getDelay?.let { delay(it) }
@@ -74,13 +73,9 @@ internal class Request<T : Any>(
                 }
             }
 
-        } catch (e: Exception) {
-            throw e
+        } catch (e: Throwable) {
+            throw KotifyException(e.message, e)
         }
-    }
-
-    fun cancel() {
-        deferred.cancel()
     }
 
     override fun toString(): String {

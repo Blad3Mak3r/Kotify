@@ -1,8 +1,7 @@
 package tv.blademaker.kotify.services
 
 import tv.blademaker.kotify.Kotify
-import tv.blademaker.kotify.models.PlaylistPagination
-import tv.blademaker.kotify.models.Track
+import tv.blademaker.kotify.models.*
 import tv.blademaker.kotify.request.RequestConfiguration
 
 class TracksService(override val kotify: Kotify) : Service {
@@ -13,6 +12,19 @@ class TracksService(override val kotify: Kotify) : Service {
     ): Track {
         return request(Track.serializer(), {
             path = "/v1/tracks/$id"
+        }, configuration)
+    }
+
+    suspend fun getSeveral(
+        vararg ids: String,
+        configuration: RequestConfiguration.() -> Unit = {}
+    ): SeveralTracksPage {
+        check(ids.size in 1..50) {
+            "Provided ids must be between 1 and 50"
+        }
+
+        return request(SeveralTracksPage.serializer(), {
+            path = "/v1/tracks?ids=${ids.joinToString(",")}"
         }, configuration)
     }
 
