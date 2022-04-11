@@ -2,7 +2,7 @@ package tv.blademaker.kotify
 
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
-import io.ktor.client.plugins.*
+import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
 import org.slf4j.LoggerFactory
@@ -51,6 +51,7 @@ class Kotify(
 
     @PublishedApi
     internal val httpClient = HttpClient(CIO) {
+        expectSuccess = true
         install(ContentNegotiation) {
             json(Json {
                 isLenient = true

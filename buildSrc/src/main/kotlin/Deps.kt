@@ -14,10 +14,10 @@ object Deps {
 }
 
 object Versions {
-    const val COROUTINES = "1.5.2"
-    const val KOTLIN = "1.6.10"
+    const val COROUTINES = "1.6.1"
+    const val KOTLIN = "1.6.20"
     const val KOTLIN_SERIALIZATION = "1.3.1"
-    const val KTOR = "2.0.0-beta-1"
+    const val KTOR = "2.0.0"
     const val SLF4J_API = "1.7.32"
     const val LOGBACK = "1.2.7"
 }

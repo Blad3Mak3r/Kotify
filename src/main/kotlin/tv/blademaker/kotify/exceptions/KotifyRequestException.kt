@@ -5,20 +5,18 @@ import io.ktor.client.statement.*
 import io.ktor.util.*
 import kotlinx.coroutines.CompletableDeferred
 
-class KotifyException(override val message: String?, override val cause: Throwable?) : RuntimeException()
+open class KotifyException(override val message: String? = null, override val cause: Throwable? = null) : RuntimeException()
 
 @Suppress("unused", "MemberVisibilityCanBePrivate")
 class KotifyRequestException(
     response: HttpResponse,
     val error: String
-) : Exception() {
+) : KotifyException(message = "${response.status.value} $error") {
 
     val status = response.status.value
     val description = response.status.description
 
     val headers = response.headers.toMap()
-
-    override val message: String = "$status $error"
 
     companion object {
         suspend fun complete(deferred: CompletableDeferred<*>, ex: ClientRequestException) {

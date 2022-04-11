@@ -52,7 +52,7 @@ class CredentialsManager internal constructor(
 
         val res = response.body<ClientCredentials>()
 
-        Kotify.log.info("Got new access token ${res.accessToken}")
+        Kotify.log.info("Got new access token for client $clientId")
 
         return res
     }

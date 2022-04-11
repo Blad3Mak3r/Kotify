@@ -1,9 +1,9 @@
-import io.ktor.client.plugins.*
 import kotlinx.coroutines.runBlocking
 import org.junit.FixMethodOrder
 import org.junit.Test
 import org.junit.runners.MethodSorters
 import tv.blademaker.kotify.Kotify
+import tv.blademaker.kotify.exceptions.KotifyException
 import tv.blademaker.kotify.exceptions.KotifyRequestException
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -32,7 +32,9 @@ class KotifyTest {
         val result = try {
             kotify.albums.get(invalidAlbumID)
             null
-        } catch (e: ClientRequestException) {
+        } catch (e: KotifyRequestException) {
+            e
+        } catch (e: KotifyException) {
             e
         }
 
@@ -48,14 +50,16 @@ class KotifyTest {
             null
         } catch (e: KotifyRequestException) {
             e
+        } catch (e: KotifyException) {
+            e
         }
 
         assert(result != null) {
             "Not threw exception"
         }
 
-        assert(result!!.error.contains("non existing id")) {
-            result.error
+        assert(result!!.message!!.contains("non existing id")) {
+            result.message!!
         }
     }
 
