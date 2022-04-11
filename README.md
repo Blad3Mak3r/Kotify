@@ -3,6 +3,7 @@ Advanced coroutine-based Spotify API wrapper for Kotlin.
 
 ## Contens
 - [Todo](#todo)
+- [Prerequisites](#prerequisites)
 - [Getting started](#getting-started)
 
 ## TODO
@@ -115,6 +116,13 @@ Advanced coroutine-based Spotify API wrapper for Kotlin.
 
 ### Markets
   - [ ] Get Available Markets.
+
+## Prerequisites
+This package has the following requirements:
+- [JDK **11**](https://openjdk.java.net/projects/jdk/11/)
+- [Kotlin **1.6.20**](https://github.com/JetBrains/kotlin/releases/tag/v1.6.20)
+- [Coroutines **1.6.1**](https://github.com/Kotlin/kotlinx.coroutines/releases/tag/1.6.1)
+- [Ktor Client **2.0.0**](https://github.com/ktorio/ktor/releases/tag/2.0.0)
 
 ## Getting started
 Configure the **Kotify** instance and execute requests:
