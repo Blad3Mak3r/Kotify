@@ -15,7 +15,7 @@ enum class AlbumType {
 data class Album(
     val id: String,
     val name: String,
-    @SerialName("album_type") val albumType: String,
+    @SerialName("album_type") val albumType: AlbumType? = null,
     @SerialName("total_tracks") val totalTracks: Int,
     @SerialName("available_markets") val availableMarkets: List<String>? = null,
     @SerialName("external_urls") val externalUrls: Map<String, String>,
@@ -34,7 +34,7 @@ data class PartialAlbum(
     val id: String,
     val name: String,
     val uri: String,
-    @SerialName("album_type") val albumType: String,
+    @SerialName("album_type") val albumType: AlbumType? = null,
     @SerialName("total_tracks") val totalTracks: Int,
     @SerialName("available_markets") val availableMarkets: List<String>? = null,
     @SerialName("external_urls") val externalUrls: Map<String, String>,
