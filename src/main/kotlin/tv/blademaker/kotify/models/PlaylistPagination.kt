@@ -1,12 +1,13 @@
 package tv.blademaker.kotify.models
 
 import io.ktor.http.*
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
+import kotlinx.serialization.*
+import tv.blademaker.kotify.serializers.ItemListSerializer
 
 @Serializable
 data class PlaylistPagination(
     val href: String,
+    @Serializable(with = ItemListSerializer::class)
     val items: List<Item>,
     val limit: Int,
     val next: String? = null,
