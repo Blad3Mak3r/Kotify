@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "tv.blademaker"
-val versionObj = Version(0, 4, 4)
+val versionObj = Version(0, 4, 5)
 version = versionObj.toString()
 
 repositories {
@@ -38,7 +38,13 @@ val dokkaOutputDir = "$buildDir/dokka"
 
 tasks {
     withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-        this.kotlinOptions.jvmTarget = "11"
+        this.kotlinOptions {
+            jvmTarget = "11"
+            freeCompilerArgs = listOf(
+                "-Xopt-in=kotlin.RequiresOptIn"
+            )
+        }
+
     }
 
     getByName<org.jetbrains.dokka.gradle.DokkaTask>("dokkaHtml") {

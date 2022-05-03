@@ -53,10 +53,7 @@ class Kotify(
     internal val httpClient = HttpClient(CIO) {
         expectSuccess = true
         install(ContentNegotiation) {
-            json(Json {
-                isLenient = true
-                ignoreUnknownKeys = true
-            })
+            json(JSON)
         }
     }
 
@@ -119,6 +116,11 @@ class Kotify(
         internal var baseUrl: String = "https://api.spotify.com"
 
         const val VERSION = "0.4.2"
+
+        val JSON = Json {
+            isLenient = true
+            ignoreUnknownKeys = true
+        }
     }
 
     enum class Scope(

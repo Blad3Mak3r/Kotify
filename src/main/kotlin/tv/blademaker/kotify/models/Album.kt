@@ -2,12 +2,20 @@ package tv.blademaker.kotify.models
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import tv.blademaker.kotify.Kotify
+
+@Serializable
+enum class AlbumType {
+    @SerialName("album") ALBUM,
+    @SerialName("single") SINGLE,
+    @SerialName("compilation") COMPILATION
+}
 
 @Serializable
 data class Album(
     val id: String,
     val name: String,
-    @SerialName("album_type") val albumType: String,
+    @SerialName("album_type") val albumType: AlbumType,
     @SerialName("total_tracks") val totalTracks: Int,
     @SerialName("available_markets") val availableMarkets: List<String>? = null,
     @SerialName("external_urls") val externalUrls: Map<String, String>,
@@ -26,7 +34,7 @@ data class PartialAlbum(
     val id: String,
     val name: String,
     val uri: String,
-    @SerialName("album_type") val albumType: String,
+    @SerialName("album_type") val albumType: AlbumType,
     @SerialName("total_tracks") val totalTracks: Int,
     @SerialName("available_markets") val availableMarkets: List<String>? = null,
     @SerialName("external_urls") val externalUrls: Map<String, String>,
