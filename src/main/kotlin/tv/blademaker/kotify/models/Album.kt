@@ -2,6 +2,14 @@ package tv.blademaker.kotify.models
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import tv.blademaker.kotify.Kotify
+
+@Serializable
+enum class AlbumType {
+    @SerialName("album") ALBUM,
+    @SerialName("single") SINGLE,
+    @SerialName("compilation") COMPILATION
+}
 
 @Serializable
 data class Album(
