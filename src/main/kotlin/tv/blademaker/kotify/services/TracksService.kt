@@ -33,7 +33,7 @@ class TracksService(override val kotify: Kotify) : Service {
         configuration: RequestConfiguration.() -> Unit = {}
     ): PlaylistPagination {
         return request(PlaylistPagination.serializer(), {
-            path = "/v1/me/tracks"
+            path = "/v1/me/tracks?limit=50"
         }, RequestConfiguration().apply(configuration).apply {
             this.accessToken = accessToken
         })
