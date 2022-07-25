@@ -1,31 +1,36 @@
 package tv.blademaker.kotify
 
-import io.ktor.client.*
-import io.ktor.client.engine.cio.*
-import io.ktor.client.plugins.contentnegotiation.*
-import io.ktor.serialization.kotlinx.json.*
-import kotlinx.coroutines.coroutineScope
+import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.OkHttpClient
 import org.slf4j.LoggerFactory
+import retrofit2.Retrofit
 import tv.blademaker.kotify.internal.CredentialsManager
-import tv.blademaker.kotify.models.Playlist
-import tv.blademaker.kotify.models.PlaylistPagination
-import tv.blademaker.kotify.models.Track
-import tv.blademaker.kotify.request.Request
-import tv.blademaker.kotify.request.RequestConfiguration
 import tv.blademaker.kotify.services.*
-import java.io.Closeable
-import java.util.*
+import java.net.URI
+import java.net.URL
+import java.net.URLEncoder
+import java.nio.charset.Charset
 import java.util.concurrent.atomic.AtomicLong
+import kotlin.io.path.toPath
 
 @Suppress("unused")
 class Kotify(
     clientID: String,
     clientSecret: String,
-    baseUrl: String = "https://api.spotify.com"
-) : Closeable {
+    baseUrl: String = "https://api.spotify.com",
+    httpClient: OkHttpClient = OkHttpClient()
+) {
+    private val credentials = CredentialsManager(this, clientID, clientSecret)
 
-    internal val credentials = CredentialsManager(this, clientID, clientSecret)
+    @OptIn(ExperimentalSerializationApi::class)
+    internal val retrofit = Retrofit.Builder()
+        .baseUrl(baseUrl)
+        .client(httpClient.newBuilder().addInterceptor(credentials).build())
+        .addConverterFactory(JSON.asConverterFactory(contentType))
+        .build()
 
     private val retryAfterRef = AtomicLong(-1L)
 
@@ -54,69 +59,71 @@ class Kotify(
             return null
         }
 
-    @PublishedApi
-    internal val httpClient = HttpClient(CIO) {
-        expectSuccess = true
-        install(ContentNegotiation) {
-            json(JSON)
-        }
-    }
-
     /**
      * Albums service.
      */
-    val albums = AlbumsService(this)
+    val albums = retrofit.create(AlbumsService::class.java)
 
     /**
      * Artists service.
      */
-    val artists = ArtistsService(this)
+    val artists = retrofit.create(ArtistsService::class.java)
 
     /**
      * Authorization service.
      */
-    val authorization = AuthorizationService(this)
+    val authorization = retrofit.create(AuthorizationService::class.java)
 
     /**
      * Categories service.
      */
-    val categories = CategoriesService(this)
+    val categories = retrofit.create(CategoriesService::class.java)
 
     /**
      * Episodes service.
      */
-    val episodes = EpisodesService(this)
+    val episodes = retrofit.create(EpisodesService::class.java)
 
     /**
      * Playlists service.
      */
-    val playlists = PlaylistsService(this)
+    val playlists = retrofit.create(PlaylistsService::class.java)
 
     /**
      * Search service.
      */
-    val search = SearchService(this)
+    val search = retrofit.create(SearchService::class.java)
 
     /**
      * Shows service.
      */
-    val shows = ShowsService(this)
+    val shows = retrofit.create(ShowsService::class.java)
 
     /**
      * Tracks service.
      */
-    val tracks = TracksService(this)
+    val tracks = retrofit.create(TracksService::class.java)
 
     /**
      * User service.
      */
-    val user = UsersService(this)
+    val user = retrofit.create(UsersService::class.java)
 
-    private val queue = LinkedList<Request<*>>()
+    fun buildAuthorizationCodeFlow(redirectUri: String, scopes: List<Kotify.Scope>, state: String? = null): URL {
 
-    override fun close() = httpClient.close()
+        return URL(buildString {
+            append("https://accounts.spotify.com/authorize")
+            append("?client_id=${credentials.clientId}")
+            append("&response_type=code")
+            append("&redirect_uri=${URLEncoder.encode(redirectUri, Charset.defaultCharset())}")
+            append("&scope=${scopes.parse()}")
+            state?.let { append("&state=$it") }
+        })
+    }
 
     companion object {
+        internal val contentType = "application/json".toMediaType()
+
         internal val log = LoggerFactory.getLogger("Kotify")
         internal var baseUrl: String = "https://api.spotify.com"
 
@@ -165,5 +172,16 @@ class Kotify(
         PLAYLIST_READ_COLLABORATIVE("playlist-read-collaborative"),
         PLAYLIST_READ_PRIVATE("playlist-read-private"),
         PLAYLIST_MODIFY_PUBLIC("playlist-modify-public")
+    }
+
+    enum class Market(
+        val value: String
+    ) {
+        NA("na"),
+        ES("es");
+
+        override fun toString(): String {
+            return this.value
+        }
     }
 }

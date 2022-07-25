@@ -1,12 +1,25 @@
 package tv.blademaker.kotify.services
 
-import tv.blademaker.kotify.Kotify
-import tv.blademaker.kotify.models.*
-import tv.blademaker.kotify.request.RequestConfiguration
+import retrofit2.http.GET
+import retrofit2.http.Header
+import retrofit2.http.Path
+import retrofit2.http.Query
+import tv.blademaker.kotify.models.PlaylistPagination
+import tv.blademaker.kotify.models.SeveralTracksPage
+import tv.blademaker.kotify.models.Track
 
-class TracksService(override val kotify: Kotify) : Service {
+interface TracksService {
 
-    suspend fun get(
+    @GET("v1/tracks/{trackId}")
+    suspend fun getTrack(@Path("trackId") trackId: String): Track
+
+    @GET("v1/tracks")
+    suspend fun getSeveralTracks(@Query(encoded = true, value = "ids") ids: String): SeveralTracksPage
+
+    @GET("v1/me/tracks")
+    suspend fun getUserSavedTracks(@Header("Authorization") accessToken: String, @Query("limit") limit: Int = 50, @Query("offset") offset: Int = 0): PlaylistPagination
+
+    /*suspend fun get(
         id: String,
         configuration: RequestConfiguration.() -> Unit = {}
     ): Track {
@@ -37,5 +50,5 @@ class TracksService(override val kotify: Kotify) : Service {
         }, RequestConfiguration().apply(configuration).apply {
             this.accessToken = accessToken
         })
-    }
+    }*/
 }

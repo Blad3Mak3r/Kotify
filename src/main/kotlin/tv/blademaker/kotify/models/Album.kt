@@ -2,7 +2,6 @@ package tv.blademaker.kotify.models
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import tv.blademaker.kotify.Kotify
 
 @Serializable
 enum class AlbumType {
@@ -15,6 +14,7 @@ enum class AlbumType {
 data class Album(
     val id: String,
     val name: String,
+    val artists: List<Artist>? = null,
     @SerialName("album_type") val albumType: AlbumType,
     @SerialName("total_tracks") val totalTracks: Int,
     @SerialName("available_markets") val availableMarkets: List<String>? = null,
@@ -25,7 +25,6 @@ data class Album(
     @SerialName("release_date_precision") val releaseDatePrecision: String,
     val restrictions: Restrictions? = null,
     val uri: String,
-    val artist: List<Artist>? = null,
     val tracks: AlbumPagination
 )
 

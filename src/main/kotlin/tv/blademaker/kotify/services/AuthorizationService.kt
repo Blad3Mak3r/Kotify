@@ -1,29 +1,8 @@
 package tv.blademaker.kotify.services
 
-import io.ktor.client.call.*
-import io.ktor.client.request.*
-import io.ktor.client.request.forms.*
-import io.ktor.http.*
-import tv.blademaker.kotify.Kotify
 import tv.blademaker.kotify.models.AuthorizationResponse
-import tv.blademaker.kotify.models.RefreshTokenResponse
-import tv.blademaker.kotify.parse
 
-class AuthorizationService(override val kotify: Kotify) : Service {
-
-    fun buildAuthorizationCodeFlow(redirectUri: String, scopes: List<Kotify.Scope>, state: String? = null): Url {
-        val builder = URLBuilder("https://accounts.spotify.com/authorize")
-
-        builder.parameters.apply {
-            append("client_id", kotify.credentials.clientId)
-            append("response_type", "code")
-            append("redirect_uri", redirectUri)
-            state?.let { append("state", it) }
-            append("scope", scopes.parse())
-        }
-
-        return builder.build()
-    }
+interface AuthorizationService {
 
     /**
      * Retrieve an Access Token for the given code and redirect uri.
@@ -35,7 +14,7 @@ class AuthorizationService(override val kotify: Kotify) : Service {
      *
      * @throws tv.blademaker.kotify.exceptions.KotifyRequestException
      */
-    suspend fun retrieveAccessToken(code: String, redirectUri: String): AuthorizationResponse {
+    /*suspend fun retrieveAccessToken(code: String, redirectUri: String): AuthorizationResponse {
         return kotify.httpClient.submitForm {
             url("https://accounts.spotify.com/api/token")
             headers {
@@ -67,5 +46,5 @@ class AuthorizationService(override val kotify: Kotify) : Service {
             parameter("grant_type", "refresh_token")
             parameter("refresh_token", refreshToken)
         }.body()
-    }
+    }*/
 }
