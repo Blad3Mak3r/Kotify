@@ -1,18 +1,29 @@
 package tv.blademaker.kotify.services
 
-import retrofit2.http.GET
-import retrofit2.http.Path
-import retrofit2.http.Query
 import tv.blademaker.kotify.Kotify
 import tv.blademaker.kotify.models.Artist
 import tv.blademaker.kotify.models.ArtistTopTracks
+import tv.blademaker.kotify.request.RequestConfiguration
 
-interface ArtistsService {
+class ArtistsService(override val kotify: Kotify) : Service {
 
-    @GET("v1/artists/{id}")
-    suspend fun getArtist(@Path("id") id: String): Artist
+    suspend fun get(
+        id: String,
+        configuration: RequestConfiguration.() -> Unit = {}
+    ): Artist {
+        return request(Artist.serializer(), {
+            path = "/v1/artists/$id"
+        }, configuration)
+    }
 
-    @GET("v1/artists/{id}/top-tracks")
-    suspend fun getArtistTopTracks(@Path("id") id: String, @Query("market") market: Kotify.Market = Kotify.Market.NA): ArtistTopTracks
+    suspend fun getTopTracks(
+        id: String,
+        market: String = "na",
+        configuration: RequestConfiguration.() -> Unit = {}
+    ): ArtistTopTracks {
+        return request(ArtistTopTracks.serializer(), {
+            path = "/v1/artists/$id/top-tracks?market=$market"
+        }, configuration)
+    }
 
 }

@@ -1,3 +1,6 @@
 package tv.blademaker.kotify.services
 
-interface CategoriesService
+import tv.blademaker.kotify.Kotify
+
+class CategoriesService(override val kotify: Kotify) : Service {
+}

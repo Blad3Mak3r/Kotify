@@ -1,11 +1,8 @@
 package tv.blademaker.kotify.internal
 
-import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.json.decodeFromStream
-import okhttp3.FormBody
-import okhttp3.Interceptor
-import okhttp3.Request
-import okhttp3.Response
+import io.ktor.client.call.*
+import io.ktor.client.request.*
+import io.ktor.client.request.forms.*
 import tv.blademaker.kotify.Kotify
 import java.util.*
 import java.util.concurrent.atomic.AtomicLong
@@ -13,10 +10,10 @@ import java.util.concurrent.atomic.AtomicReference
 
 class CredentialsManager internal constructor(
     private val kotify: Kotify,
-    val clientId: String,
-    private val clientSecret: String
-) : Interceptor{
-    private val basicAuthHeader = "Basic ${Base64.getEncoder().encodeToString("$clientId:$clientSecret".toByteArray())}"
+    internal val clientId: String,
+    internal val clientSecret: String
+){
+    internal val basicAuthHeader = "Basic ${Base64.getEncoder().encodeToString("$clientId:$clientSecret".toByteArray())}"
 
     private val accessTokenRef = AtomicReference<String>(null)
 
@@ -28,59 +25,36 @@ class CredentialsManager internal constructor(
     private val isExpired: Boolean
         get() = accessTokenRef.get() == null || expireStamp < System.currentTimeMillis()
 
-    private fun getAccessToken(chain: Interceptor.Chain): String {
+    internal suspend fun getAccessToken(): String {
         val ref = accessTokenRef.get()
         if (ref == null || isExpired) {
             if (isExpired) Kotify.log.debug("Token expired.")
-            updateAccessToken(chain)
+            updateAccessToken()
         }
         return accessTokenRef.get()
     }
 
-    private fun updateAccessToken(chain: Interceptor.Chain) {
-        val token = retrieveAccessToken(chain)
+    private suspend fun updateAccessToken() {
+        val token = retrieveAccessToken()
         accessTokenRef.set(token.accessToken)
         expireStampRef.set(token.expiresAt)
     }
 
-    @OptIn(ExperimentalSerializationApi::class)
-    private fun retrieveAccessToken(chain: Interceptor.Chain): ClientCredentials {
+    private suspend fun retrieveAccessToken(): ClientCredentials {
         Kotify.log.info("Retrieving new access token for client $clientId.")
-
-        val body = FormBody.Builder().apply {
-            add("grant_type", "client_credentials")
-        }.build()
-        val request = Request.Builder()
-            .addHeader("Authorization", basicAuthHeader)
-            .url("https://accounts.spotify.com/api/token")
-            .post(body)
-            .build()
-
-        Kotify.log.debug("Requesting accessToken for $clientId.")
-        val res = chain.proceed(request)
-
-        Kotify.log.debug("Checking accessToken request status for $clientId.")
-        check(res.isSuccessful) {
-            "Non success status code requesting accessToken: ${res.code}"
+        val response = kotify.httpClient.submitForm {
+            url("https://accounts.spotify.com/api/token")
+            headers {
+                append("Authorization", basicAuthHeader)
+            }
+            parameter("grant_type", "client_credentials")
         }
 
-        Kotify.log.debug("Parsing accessToken request body for $clientId.")
-        val credentials: ClientCredentials = res.body?.byteStream()?.let {
-            Kotify.JSON.decodeFromStream(ClientCredentials.serializer(), it)
-        }
-            ?: error("Empty body on request")
+        val res = response.body<ClientCredentials>()
 
         Kotify.log.info("Got new access token for client $clientId")
 
-        return credentials
-    }
-
-    override fun intercept(chain: Interceptor.Chain): Response {
-        val token = getAccessToken(chain)
-
-        val req = chain.request().newBuilder().addHeader("Authorization", "Bearer $token").build()
-
-        return chain.proceed(req)
+        return res
     }
 
 }

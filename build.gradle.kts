@@ -20,10 +20,10 @@ repositories {
 dependencies {
     implementation(kotlin("stdlib", Versions.KOTLIN))
 
-    implementation("com.squareup.okhttp3:okhttp:4.10.0")
-    implementation("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation("com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:0.8.0")
-
+    implementation(Deps.KTOR_CLIENT_CORE)
+    implementation(Deps.KTOR_CLIENT_CIO)
+    implementation(Deps.KTOR_CLIENT_CONTENT_NEGOTIATION)
+    implementation(Deps.KTOR_SERIALIZATION_JSON)
     implementation(Deps.COROUTINES_CORE)
     implementation(Deps.COROUTINES_JDK8)
     implementation(Deps.KOTLINX_SERIALIZATION_JSON)

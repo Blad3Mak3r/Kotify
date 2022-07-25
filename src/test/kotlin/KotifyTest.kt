@@ -23,14 +23,14 @@ class KotifyTest {
 
     @Test
     fun `1 - Get Album by ID`() = runBlocking {
-        val album = kotify.albums.getAlbum(albumID)
+        val album = kotify.albums.get(albumID)
         assert(album.id == albumID) { "albumID not equals" }
     }
 
     @Test
     fun `2 - Get Album with invalid ID`() = runBlocking {
         val result = try {
-            kotify.albums.getAlbum(invalidAlbumID)
+            kotify.albums.get(invalidAlbumID)
             null
         } catch (e: KotifyRequestException) {
             e
@@ -46,7 +46,7 @@ class KotifyTest {
     @Test
     fun `3 - Get Album with not found ID`() = runBlocking {
         val result = try {
-            kotify.albums.getAlbum(notFoundAlbumID)
+            kotify.albums.get(notFoundAlbumID)
             null
         } catch (e: KotifyRequestException) {
             e
@@ -66,11 +66,11 @@ class KotifyTest {
     @Test
     fun `4 - Get Album tracks`() = runBlocking {
         val expected = 12
-        val tracks = kotify.albums.getTracksFromAlbum(albumID)
+        val tracks = kotify.albums.getTracks(albumID)
         assert(tracks.total == expected) { "not expected value" }
     }
 
-    /*@Test
+    @Test
     fun `5 - Test playlist`() = runBlocking {
         val id = /* "2J0TRU2EDG29qlmxdGa4xa" */ "3ubLYWqCIpRW06a7kRIInC"
 
@@ -87,6 +87,6 @@ class KotifyTest {
         assert(tracks.size == totalExpected) {
             "received a total of ${tracks.size} but required is $totalExpected"
         }
-    }*/
+    }
 
 }

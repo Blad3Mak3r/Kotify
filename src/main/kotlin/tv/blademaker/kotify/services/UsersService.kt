@@ -1,15 +1,25 @@
 package tv.blademaker.kotify.services
 
-import retrofit2.http.GET
-import retrofit2.http.Header
+import tv.blademaker.kotify.Kotify
 import tv.blademaker.kotify.models.User
+import tv.blademaker.kotify.request.RequestConfiguration
 
-interface UsersService {
+class UsersService(override val kotify: Kotify) : Service {
 
-    @GET("v1/me/top/tracks")
-    suspend fun getTopTracks(@Header("Authorization") accessToken: String): User.TopTracks
+    suspend fun getTopTracks(accessToken: String, configuration: RequestConfiguration.() -> Unit = {}): User.TopTracks {
+        return request(User.TopTracks.serializer(), {
+            path = "/v1/me/top/tracks"
+        }, RequestConfiguration().apply(configuration).apply {
+            this.accessToken = accessToken
+        })
+    }
 
-    @GET("v1/me/top/artists")
-    suspend fun getTopArtists(@Header("Authorization") accessToken: String): User.TopArtists
+    suspend fun getTopArtists(accessToken: String, configuration: RequestConfiguration.() -> Unit = {}): User.TopArtists {
+        return request(User.TopArtists.serializer(), {
+            path = "/v1/me/top/artists"
+        }, RequestConfiguration().apply(configuration).apply {
+            this.accessToken = accessToken
+        })
+    }
 
 }
