@@ -21,10 +21,8 @@ internal class Request<T : Any>(
     private val accessToken: String?
     private val baseUrl: String
     private val path: String
-    val method: HttpMethod
-    val url: String
-
-    private val deferred = CompletableDeferred<T>()
+    private val method: HttpMethod
+    private val url: URLBuilder
 
     private val value = AtomicReference<T>(null)
 
@@ -35,7 +33,13 @@ internal class Request<T : Any>(
         baseUrl = builder.baseUrl
         path = builder.path
         method = builder.method
-        url = baseUrl + path
+        url = URLBuilder(baseUrl + path)
+
+        if (builder.query.isNotEmpty()) {
+            for (q in builder.query) {
+                url.parameters.append(q.key, q.value)
+            }
+        }
     }
 
     suspend fun execute(kotify: Kotify): T = coroutineScope {
@@ -45,7 +49,7 @@ internal class Request<T : Any>(
             val auth = accessToken ?: kotify.credentials.getAccessToken()
 
             val response = kotify.httpClient.request {
-                url(this@Request.url)
+                url(this@Request.url.build())
                 method = this@Request.method
                 headers {
                     set("Authorization", "Bearer $auth")
@@ -89,6 +93,7 @@ internal class Request<T : Any>(
         var method: HttpMethod = HttpMethod.Get
         var body: Any? = null
         val headers = HeadersBuilder()
+        val query = HashMap<String, String>()
     }
 
     companion object {

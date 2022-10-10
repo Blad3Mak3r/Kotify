@@ -89,4 +89,19 @@ class KotifyTest {
         }
     }
 
+    @Test
+    fun `6 - Get recommendations by track id`() = runBlocking {
+        val trackIds = listOf("03UrZgTINDqvnUMbbIMhql")
+
+        val recommendations = kotify.recommendations.byTracksId(trackIds)
+
+        val tracks = recommendations.tracks
+
+        assert(tracks.isNotEmpty()) {
+            "empty recommendations"
+        }
+
+        println("Got ${tracks.size} tracks")
+    }
+
 }

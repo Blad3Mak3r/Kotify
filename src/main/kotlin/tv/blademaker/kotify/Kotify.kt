@@ -4,15 +4,10 @@ import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.serialization.kotlinx.json.*
-import kotlinx.coroutines.coroutineScope
 import kotlinx.serialization.json.Json
 import org.slf4j.LoggerFactory
 import tv.blademaker.kotify.internal.CredentialsManager
-import tv.blademaker.kotify.models.Playlist
-import tv.blademaker.kotify.models.PlaylistPagination
-import tv.blademaker.kotify.models.Track
 import tv.blademaker.kotify.request.Request
-import tv.blademaker.kotify.request.RequestConfiguration
 import tv.blademaker.kotify.services.*
 import java.io.Closeable
 import java.util.*
@@ -91,6 +86,11 @@ class Kotify(
      * Playlists service.
      */
     val playlists = PlaylistsService(this)
+
+    /**
+     * Recommendations service.
+     */
+    val recommendations = RecommendationsService(this)
 
     /**
      * Search service.
