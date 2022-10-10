@@ -82,7 +82,7 @@ class KotifyTest {
             "not equal ids"
         }
 
-        val tracks = kotify.playlists.retrieveAllTracks(playlist)
+        val tracks = kotify.playlists.retrieveTracksFromPlaylist(playlist)
 
         assert(tracks.size == totalExpected) {
             "received a total of ${tracks.size} but required is $totalExpected"

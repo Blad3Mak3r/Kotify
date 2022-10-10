@@ -29,16 +29,19 @@ class PlaylistsService(override val kotify: Kotify) : Service {
         }, configuration)
     }
 
-    suspend fun retrieveAllTracks(
+    suspend fun retrieveTracksFromPlaylist(
         playlist: Playlist,
+        maxPages: Int = 6,
         configuration: RequestConfiguration.() -> Unit = {}
     ): List<Track> = coroutineScope {
+        var currentPage = 1
         val tracks = mutableListOf<Track>()
         val paginator = playlist.tracks
         tracks.addAll(paginator.items.filter { !it.isLocal }.map { it.track })
 
         var nextValues = paginator.nextValues
-        while (nextValues != null) {
+        while (nextValues != null && currentPage <=maxPages) {
+            currentPage++
             val (offset, limit) = nextValues
             val page = fetchTracksPage(playlist.id, limit, offset, configuration)
             nextValues = page.nextValues
