@@ -4,29 +4,35 @@ import io.ktor.client.plugins.*
 import io.ktor.client.statement.*
 import io.ktor.util.*
 import kotlinx.coroutines.CompletableDeferred
+import java.io.IOException
 
-open class KotifyException(override val message: String? = null, override val cause: Throwable? = null) : RuntimeException()
+open class KotifyException(override val message: String? = null, override val cause: Throwable? = null) : IOException()
 
 @Suppress("unused", "MemberVisibilityCanBePrivate")
-class KotifyRequestException(
-    response: HttpResponse,
-    val error: String
-) : KotifyException(message = "${response.status.value} $error") {
+class KotifyRequestException private constructor(
+    override val cause: ClientRequestException, sup: KotifySuppressedInfo
+) : KotifyException(message = "${cause.response.status.value} ${cause.response.status.description}") {
 
-    val status = response.status.value
-    val description = response.status.description
+    val status = cause.response.status.value
+    val description = cause.response.status.description
 
-    val headers = response.headers.toMap()
+    val headers = cause.response.headers.toMap()
+
+    init {
+        addSuppressed(sup)
+    }
 
     companion object {
-        suspend fun complete(deferred: CompletableDeferred<*>, ex: ClientRequestException) {
-            deferred.completeExceptionally(from(ex))
-        }
-
         suspend fun from(ex: ClientRequestException): KotifyRequestException {
-            val error = ex.response.bodyAsText()
-
-            return KotifyRequestException(ex.response, error)
+            val content = ex.response.bodyAsText()
+            return KotifyRequestException(ex, KotifySuppressedInfo(ex.response, content))
         }
     }
 }
+
+class KotifySuppressedInfo(response: HttpResponse, content: String) : Throwable(buildString {
+    appendLine("response.status.code: ${response.status.value}")
+    appendLine("response.status.message: ${response.status.description}")
+    appendLine("response.http.version: ${response.version}")
+    appendLine("response.content: $content")
+})
