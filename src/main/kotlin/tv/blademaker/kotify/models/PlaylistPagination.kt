@@ -1,7 +1,8 @@
 package tv.blademaker.kotify.models
 
 import io.ktor.http.*
-import kotlinx.serialization.*
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import tv.blademaker.kotify.serializers.ItemListSerializer
 
 @Serializable

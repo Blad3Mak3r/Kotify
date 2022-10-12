@@ -1,7 +1,9 @@
 package tv.blademaker.kotify.services
 
 import tv.blademaker.kotify.Kotify
-import tv.blademaker.kotify.models.*
+import tv.blademaker.kotify.models.PlaylistPagination
+import tv.blademaker.kotify.models.SeveralTracksPage
+import tv.blademaker.kotify.models.Track
 import tv.blademaker.kotify.request.RequestConfiguration
 
 class TracksService(override val kotify: Kotify) : Service {

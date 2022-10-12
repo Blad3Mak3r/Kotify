@@ -3,7 +3,6 @@ package tv.blademaker.kotify.exceptions
 import io.ktor.client.plugins.*
 import io.ktor.client.statement.*
 import io.ktor.util.*
-import kotlinx.coroutines.CompletableDeferred
 import java.io.IOException
 
 open class KotifyException(override val message: String? = null, override val cause: Throwable? = null) : IOException()

@@ -1,8 +1,6 @@
 package tv.blademaker.kotify.services
 
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.withContext
 import kotlinx.serialization.KSerializer
 import tv.blademaker.kotify.Kotify
 import tv.blademaker.kotify.request.Request
