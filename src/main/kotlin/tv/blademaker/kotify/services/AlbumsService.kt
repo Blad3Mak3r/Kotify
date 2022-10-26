@@ -4,49 +4,50 @@ import kotlinx.serialization.builtins.ListSerializer
 import tv.blademaker.kotify.Kotify
 import tv.blademaker.kotify.models.Album
 import tv.blademaker.kotify.models.AlbumPagination
+import tv.blademaker.kotify.models.UserAlbumsPage
+import tv.blademaker.kotify.models.paginatedRequest
+import tv.blademaker.kotify.request.Request
 import tv.blademaker.kotify.request.RequestConfiguration
+import tv.blademaker.kotify.utils.withAccessToken
 
 class AlbumsService(override val kotify: Kotify) : Service {
 
-    suspend fun get(
-        id: String,
-        configuration: RequestConfiguration.() -> Unit = {}
-    ): Album {
-        return request(Album.serializer(), {
-            path = "/v1/albums/$id"
-        }, configuration)
+    companion object {
+        private val AlbumSerializer = Album.serializer()
+        private val ListAlbumSerializer = ListSerializer(Album.serializer())
     }
 
-    suspend fun getSeveral(
-        ids: Collection<String>,
-        market: String? = null,
-        configuration: RequestConfiguration.() -> Unit = {}
-    ): List<Album> {
-        return request(ListSerializer(Album.serializer()), {
-            path = "/v1/albums?ids=${ids.joinToString(",")}" + if (market != null) "&=market$market" else ""
-        }, configuration)
+    suspend fun getAlbum(id: String): Album {
+        return get("/v1/albums/$id", AlbumSerializer).execute()
     }
 
-    suspend fun getTracks(
-        id: String,
-        limit: Int = 20,
-        offset: Int = 0,
-        market: String? = null,
-        configuration: RequestConfiguration.() -> Unit = {}
-    ): AlbumPagination {
-        return request(AlbumPagination.serializer(), {
-            path = "/v1/albums/$id/tracks?limit=$limit&offset=$offset" + if (market != null) "&=market$market" else ""
-        }, configuration)
+    suspend fun getSeveralAlbums(vararg ids: String): List<Album> {
+        return get("/v1/albums", ListAlbumSerializer)
+            .addQuery("ids", ids.joinToString(","))
+            .execute()
     }
 
-    suspend fun getSaved(
-        limit: Int = 20,
-        offset: Int = 0,
-        market: String? = null,
-        configuration: RequestConfiguration.() -> Unit = {}
-    ): List<Album> {
-        return request(ListSerializer(Album.serializer()), {
-            path = "/v1/me/albums?limit=$limit&offset=$offset" + if (market != null) "&=market$market" else ""
-        }, configuration)
+    private suspend fun getUserSavedAlbumsPage(limit: Int = 20, offset: Int): UserAlbumsPage {
+        return get("/v1/me/albums", UserAlbumsPage.serializer())
+            .limit(limit)
+            .offset(offset)
+            .execute()
+    }
+
+    suspend fun getUserSavedAlbums(accessToken: String, pages: Int = 6) = withAccessToken(accessToken, this) {
+        paginatedRequest(20, 0, pages) { limit, offset ->
+            getUserSavedAlbumsPage(limit, offset)
+        }
+    }
+
+    private suspend fun getAlbumTracksPage(albumId: String, limit: Int, offset: Int): AlbumPagination {
+        return get("/v1/albums/$albumId/tracks", AlbumPagination.serializer())
+            .limit(limit)
+            .offset(offset)
+            .execute()
+    }
+
+    suspend fun getAlbumTracks(album: Album, pages: Int = 6) = paginatedRequest(20, 0, pages) { limit, offset ->
+        getAlbumTracksPage(album.id, limit, offset)
     }
 }

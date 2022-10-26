@@ -1,3 +1,5 @@
+import java.io.ByteArrayOutputStream
+
 plugins {
     kotlin("jvm") version Versions.KOTLIN
     kotlin("plugin.serialization") version Versions.KOTLIN
@@ -7,10 +9,11 @@ plugins {
     `maven-publish`
     `java-library`
     signing
+    java
 }
 
 group = "tv.blademaker"
-val versionObj = Version(0, 5, 0)
+val versionObj = Version(1, 0, 0, "alpha.1")
 version = versionObj.toString()
 
 repositories {
@@ -126,12 +129,13 @@ publishing {
 class Version(
     private val major: Int,
     private val minor: Int,
-    private val revision: Int
+    private val revision: Int,
+    val candidate: String? = null
 ) {
-    val isSnapshot = System.getenv("OSSRH_SNAPSHOT") != null
+    val isSnapshot = candidate != null
 
     override fun toString(): String {
-        return "$major.$minor.$revision" + if (isSnapshot) "-SNAPSHOT" else ""
+        return "$major.$minor.$revision" + if (candidate != null) "-$candidate" else ""
     }
 }
 

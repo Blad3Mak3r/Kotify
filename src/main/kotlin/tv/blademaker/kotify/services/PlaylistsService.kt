@@ -1,53 +1,35 @@
 package tv.blademaker.kotify.services
 
 import kotlinx.coroutines.coroutineScope
+import kotlinx.serialization.builtins.ListSerializer
 import tv.blademaker.kotify.Kotify
-import tv.blademaker.kotify.models.Playlist
-import tv.blademaker.kotify.models.PlaylistPagination
-import tv.blademaker.kotify.models.Track
+import tv.blademaker.kotify.models.*
+import tv.blademaker.kotify.models.paginatedRequest
 import tv.blademaker.kotify.request.RequestConfiguration
+import tv.blademaker.kotify.utils.withAccessToken
 
 class PlaylistsService(override val kotify: Kotify) : Service {
 
-    suspend fun get(
-        id: String,
-        configuration: RequestConfiguration.() -> Unit = {}
-    ): Playlist {
-        return request(Playlist.serializer(), {
-            path = "/v1/playlists/$id"
-        }, configuration)
+    companion object {
+        private val ListSerializer = ListSerializer(Playlist.serializer())
     }
 
-    private suspend fun fetchTracksPage(
-        id: String,
-        limit: Int,
-        offset: Int,
-        configuration: RequestConfiguration.() -> Unit = {}
-    ): PlaylistPagination {
-        return request(PlaylistPagination.serializer(), {
-            path = "/v1/playlists/$id/tracks?offset=$offset&limit=$limit"
-        }, configuration)
+    suspend fun getPlaylist(playlistId: String): Playlist {
+        return get("/v1/playlists/$playlistId", Playlist.serializer()).execute()
     }
 
-    suspend fun retrieveTracksFromPlaylist(
-        playlist: Playlist,
-        maxPages: Int = 6,
-        configuration: RequestConfiguration.() -> Unit = {}
-    ): List<Track> = coroutineScope {
-        var currentPage = 1
-        val tracks = mutableListOf<Track>()
-        val paginator = playlist.tracks
-        tracks.addAll(paginator.items.filter { !it.isLocal }.map { it.track })
-
-        var nextValues = paginator.nextValues
-        while (nextValues != null && currentPage <=maxPages) {
-            currentPage++
-            val (offset, limit) = nextValues
-            val page = fetchTracksPage(playlist.id, limit, offset, configuration)
-            nextValues = page.nextValues
-            tracks.addAll(page.items.filter { !it.isLocal }.map { it.track })
-        }
-
-        tracks
+    suspend fun getCurrentUserPlaylists(accessToken: String): UserPlaylistsPage = withAccessToken(accessToken, this) {
+        get("/v1/me/playlists", UserPlaylistsPage.serializer()).execute()
     }
+
+    private suspend fun getPlaylistTracksPage(playlistId: String, limit: Int, offset: Int): PlaylistPagination {
+        return get("/v1/playlists/$playlistId/tracks", PlaylistPagination.serializer())
+            .limit(limit)
+            .offset(offset)
+            .execute()
+    }
+
+    suspend fun getPlaylistTracks(playlist: Playlist, pages: Int = 6): List<Track> = paginatedRequest(20, 0, pages) { limit, offset ->
+        getPlaylistTracksPage(playlist.id, limit, offset)
+    }.map { it.track }
 }

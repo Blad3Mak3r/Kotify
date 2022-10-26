@@ -31,3 +31,16 @@ data class Playlist(
         val uri: String
     )
 }
+
+@Serializable
+data class PartialPlaylist(
+    val id: String,
+    val name: String,
+    val description: String? = null,
+    val collaborative: Boolean,
+    val href: String,
+    val images: List<Image>,
+    val public: Boolean,
+    val type: String,
+    val uri: String
+)

@@ -7,16 +7,16 @@ import tv.blademaker.kotify.serializers.ItemListSerializer
 
 @Serializable
 data class PlaylistPagination(
-    val href: String,
+    override val href: String,
     @Serializable(with = ItemListSerializer::class)
-    val items: List<Item>,
-    val limit: Int,
-    val next: String? = null,
-    val offset: Int? = null,
-    val previous: String? = null,
-    val total: Int
-) {
-    val nextValues: NextValues? = nextValues(this)
+    override val items: List<Item>,
+    override val limit: Int,
+    override val next: String? = null,
+    override val offset: Int? = null,
+    override val previous: String? = null,
+    override val total: Int
+) : ItemPaginator<PlaylistPagination.Item> {
+    override val nextValues: NextValues? = nextValues(this)
 
     @Serializable
     data class Item(
@@ -26,23 +26,4 @@ data class PlaylistPagination(
         @SerialName("primary_color") val primaryColor: String? = null,
         val track: Track
     )
-
-    @Serializable
-    data class NextValues(
-        val offset: Int,
-        val limit: Int
-    )
-
-    companion object {
-        private fun nextValues(paginator: PlaylistPagination): NextValues? {
-            val next = paginator.next ?: return null
-
-            val url = Url(next)
-
-            val offset = url.parameters["offset"]?.toIntOrNull() ?: return null
-            val limit = url.parameters["limit"]?.toIntOrNull() ?: paginator.limit
-
-            return NextValues(offset, limit)
-        }
-    }
 }

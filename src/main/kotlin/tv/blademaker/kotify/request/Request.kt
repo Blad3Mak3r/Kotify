@@ -4,50 +4,56 @@ import io.ktor.client.plugins.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
+import io.ktor.utils.io.jvm.javaio.*
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.decodeFromStream
 import tv.blademaker.kotify.Kotify
 import tv.blademaker.kotify.exceptions.KotifyException
 import tv.blademaker.kotify.exceptions.KotifyRequestException
+import tv.blademaker.kotify.internal.ContextAccessToken
 import java.util.concurrent.atomic.AtomicReference
+import kotlin.coroutines.CoroutineContext
 
-internal class Request<T : Any>(
+class Request<T : Any>(
+    private val kotify: Kotify,
     private val serializer: KSerializer<T>,
-    requestBuilder: Builder.() -> Unit,
-    config: RequestConfiguration
-) {
-
-    private val accessToken: String?
-    private val baseUrl: String
+    private var method: HttpMethod,
     private val path: String
-    private val method: HttpMethod
-    private val url: URLBuilder
+    ) {
 
-    private val value = AtomicReference<T>(null)
-
-    init {
-        val builder = Builder().apply(requestBuilder)
-
-        accessToken = config.accessToken
-        baseUrl = builder.baseUrl
-        path = builder.path
-        method = builder.method
-        url = URLBuilder(baseUrl + path)
-
-        if (builder.query.isNotEmpty()) {
-            for (q in builder.query) {
-                url.parameters.append(q.key, q.value)
-            }
-        }
+    private val url: URLBuilder = URLBuilder(Kotify.baseUrl).apply {
+        path(path)
     }
 
-    suspend fun execute(kotify: Kotify): T = coroutineScope {
+    fun addQuery(name: String, value: String): Request<T> {
+        url.parameters.append(name, value)
+        return this
+    }
+
+    fun limit(value: Int): Request<T> {
+        url.parameters["limit"] = value.toString()
+        return this
+    }
+
+    fun offset(value: Int): Request<T> {
+        url.parameters["offset"] = value.toString()
+        return this
+    }
+
+    fun addQuery(name: String, value: Int): Request<T> {
+        url.parameters.append(name, value.toString())
+        return this
+    }
+
+    suspend fun execute(): T = coroutineScope {
         kotify.getDelay?.let { delay(it) }
 
         try {
-            val auth = accessToken ?: kotify.credentials.getAccessToken()
+            val auth = this.coroutineContext[ContextAccessToken]?.value
+                ?: kotify.credentials.getAccessToken()
 
             val response = kotify.httpClient.request {
                 url(this@Request.url.build())
@@ -70,7 +76,8 @@ internal class Request<T : Any>(
                     retryAfterValue?.let {
                         kotify.retryAfter = (it * 1000L + 1200L)
                     }
-                    return@coroutineScope execute(kotify)
+                    delay(kotify.retryAfter)
+                    return@coroutineScope execute()
                 }
                 else -> {
                     Kotify.log.error("Handled exception executing request ${this@Request}: ${ex.message}", ex)
@@ -79,22 +86,12 @@ internal class Request<T : Any>(
             }
 
         } catch (e: Throwable) {
-            throw KotifyException(e.message, e)
+            throw e
         }
     }
 
     override fun toString(): String {
         return "[${method.value}] -> (${url})"
-    }
-
-    @Suppress("unused")
-    internal class Builder {
-        var baseUrl: String = Kotify.baseUrl
-        var path: String = ""
-        var method: HttpMethod = HttpMethod.Get
-        var body: Any? = null
-        val headers = HeadersBuilder()
-        val query = HashMap<String, String>()
     }
 
     companion object {

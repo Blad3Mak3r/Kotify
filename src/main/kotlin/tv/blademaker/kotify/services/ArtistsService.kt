@@ -7,23 +7,13 @@ import tv.blademaker.kotify.request.RequestConfiguration
 
 class ArtistsService(override val kotify: Kotify) : Service {
 
-    suspend fun get(
-        id: String,
-        configuration: RequestConfiguration.() -> Unit = {}
-    ): Artist {
-        return request(Artist.serializer(), {
-            path = "/v1/artists/$id"
-        }, configuration)
+    suspend fun getArtist(artistId: String): Artist {
+        return get("/v1/artists/$artistId", Artist.serializer()).execute()
     }
 
-    suspend fun getTopTracks(
-        id: String,
-        market: String = "na",
-        configuration: RequestConfiguration.() -> Unit = {}
-    ): ArtistTopTracks {
-        return request(ArtistTopTracks.serializer(), {
-            path = "/v1/artists/$id/top-tracks?market=$market"
-        }, configuration)
+    suspend fun getArtistTopTracks(artistId: String, market: String = "na"): ArtistTopTracks {
+        return get("/v1/artists/$artistId/top-tracks", ArtistTopTracks.serializer())
+            .addQuery("market", market)
+            .execute()
     }
-
 }

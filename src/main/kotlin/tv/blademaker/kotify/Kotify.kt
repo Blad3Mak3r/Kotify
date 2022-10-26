@@ -3,21 +3,29 @@ package tv.blademaker.kotify
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import kotlinx.serialization.KSerializer
 import kotlinx.serialization.json.Json
 import org.slf4j.LoggerFactory
+import tv.blademaker.kotify.internal.ContextAccessToken
 import tv.blademaker.kotify.internal.CredentialsManager
 import tv.blademaker.kotify.request.Request
 import tv.blademaker.kotify.services.*
 import java.io.Closeable
 import java.util.*
 import java.util.concurrent.atomic.AtomicLong
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
 @Suppress("unused")
 class Kotify(
     clientID: String,
-    clientSecret: String,
-    baseUrl: String = "https://api.spotify.com"
+    clientSecret: String
 ) : Closeable {
 
     internal val credentials = CredentialsManager(this, clientID, clientSecret)
@@ -30,10 +38,6 @@ class Kotify(
             log.debug("Adding a retry after of ${value}ms.")
             retryAfterRef.set(System.currentTimeMillis() + value)
         }
-
-    init {
-        Companion.baseUrl = baseUrl
-    }
 
 
     internal val getDelay: Long?
@@ -55,6 +59,10 @@ class Kotify(
         install(ContentNegotiation) {
             json(JSON)
         }
+    }
+
+    internal inline fun <reified T : Any> newRequest(method: HttpMethod, path: String, serializer: KSerializer<T>): Request<T> {
+        return Request(this, serializer, method, path)
     }
 
     /**
@@ -93,11 +101,6 @@ class Kotify(
     val recommendations = RecommendationsService(this)
 
     /**
-     * Search service.
-     */
-    val search = SearchService(this)
-
-    /**
      * Shows service.
      */
     val shows = ShowsService(this)
@@ -111,6 +114,8 @@ class Kotify(
      * User service.
      */
     val user = UsersService(this)
+
+
 
     private val queue = LinkedList<Request<*>>()
 
