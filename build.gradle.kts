@@ -66,6 +66,8 @@ val javadocJar = tasks.register<Jar>("javadocJar") {
 
 java {
     withSourcesJar()
+    targetCompatibility = JavaVersion.VERSION_11
+    sourceCompatibility = JavaVersion.VERSION_11
 }
 
 val mavenCentralRepository = if (versionObj.isSnapshot)
