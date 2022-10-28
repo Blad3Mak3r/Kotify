@@ -15,7 +15,9 @@ class PlaylistsService(override val kotify: Kotify) : Service {
     }
 
     suspend fun getPlaylist(playlistId: String): Playlist {
-        return get("/v1/playlists/$playlistId", Playlist.serializer()).execute()
+        return kotify.cache.getPlaylist(playlistId) {
+            get("/v1/playlists/$playlistId", Playlist.serializer()).execute()
+        }
     }
 
     suspend fun getCurrentUserPlaylists(accessToken: String): UserPlaylistsPage = withAccessToken(accessToken, this) {
@@ -29,7 +31,11 @@ class PlaylistsService(override val kotify: Kotify) : Service {
             .execute()
     }
 
-    suspend fun getPlaylistTracks(playlist: Playlist, pages: Int = 6): List<Track> = paginatedRequest(20, 0, pages) { limit, offset ->
-        getPlaylistTracksPage(playlist.id, limit, offset)
-    }.map { it.track }
+    suspend fun getPlaylistTracks(playlist: Playlist, pages: Int = 6): List<Track> {
+        return kotify.cache.getPlaylistTracks(playlist.id) {
+            paginatedRequest(20, 0, pages) { limit, offset ->
+                getPlaylistTracksPage(playlist.id, limit, offset)
+            }.map { it.track }
+        }
+    }
 }

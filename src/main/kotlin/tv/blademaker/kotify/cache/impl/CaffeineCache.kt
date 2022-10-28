@@ -35,59 +35,37 @@ class CaffeineCache : KotifyCache {
         .expireAfterWrite(Duration.ofHours(2))
         .build<String, Track>()
 
-    override suspend fun getAlbum(albumId: String): Album? {
-        return albums.getIfPresent(albumId)
+
+    override suspend fun getAlbum(albumId: String, fallback: suspend () -> Album): Album {
+        return albums.getIfPresent(albumId) ?: fallback().also { albums.put(albumId, it) }
     }
 
-    override suspend fun setAlbum(album: Album) {
-        return albums.put(album.id, album)
+    override suspend fun getAlbumTracks(albumId: String, fallback: suspend () -> List<Track>): List<Track> {
+        return albumTracks.getIfPresent(albumId) ?: fallback().also { if (it.isNotEmpty()) albumTracks.put(albumId, it) }
     }
 
-    override suspend fun getAlbumTracks(albumId: String): List<Track>? {
-        return albumTracks.getIfPresent(albumId)
+    override suspend fun getArtist(artistId: String, fallback: suspend () -> Artist): Artist {
+        return artists.getIfPresent(artistId) ?: fallback().also { artists.put(artistId, it) }
     }
 
-    override suspend fun setAlbumTracks(albumId: String, tracks: List<Track>) {
-        return albumTracks.put(albumId, tracks)
+    override suspend fun getArtistTopTracks(
+        artistId: String,
+        fallback: suspend () -> ArtistTopTracks
+    ): ArtistTopTracks {
+        return artistTopTracks.getIfPresent(artistId) ?: fallback().also { artistTopTracks.put(artistId, it) }
     }
 
-    override suspend fun getArtist(artistId: String): Artist? {
-        return artists.getIfPresent(artistId)
+    override suspend fun getPlaylist(playlistId: String, fallback: suspend () -> Playlist): Playlist {
+        return playlists.getIfPresent(playlistId) ?: fallback().also { playlists.put(playlistId, it) }
     }
 
-    override suspend fun setArtist(artist: Artist) {
-        return artists.put(artist.id, artist)
+    override suspend fun getPlaylistTracks(playlistId: String, fallback: suspend () -> List<Track>): List<Track> {
+        return playlistTracks.getIfPresent(playlistId) ?: fallback().also {
+            if (it.isNotEmpty()) playlistTracks.put(playlistId, it)
+        }
     }
 
-    override suspend fun getArtistTopTracks(artistId: String): ArtistTopTracks? {
-        return artistTopTracks.getIfPresent(artistId)
-    }
-
-    override suspend fun setArtistTopTracks(artistId: String, tracks: ArtistTopTracks) {
-        return artistTopTracks.put(artistId, tracks)
-    }
-
-    override suspend fun getPlaylist(playlistId: String): Playlist? {
-        return playlists.getIfPresent(playlistId)
-    }
-
-    override suspend fun setPlaylist(playlist: Playlist) {
-        return playlists.put(playlist.id, playlist)
-    }
-
-    override suspend fun getPlaylistTracks(playlistId: String): List<Track>? {
-        return playlistTracks.getIfPresent(playlistId)
-    }
-
-    override suspend fun setPlaylistTracks(playlistId: String, tracks: List<Track>) {
-        return playlistTracks.put(playlistId, tracks)
-    }
-
-    override suspend fun getTrack(trackId: String): Track? {
-        return tracks.getIfPresent(trackId)
-    }
-
-    override suspend fun setTrack(track: Track) {
-        return tracks.put(track.id, track)
+    override suspend fun getTrack(trackId: String, fallback: suspend () -> Track): Track {
+        return tracks.getIfPresent(trackId) ?: fallback().also { tracks.put(trackId, it) }
     }
 }
