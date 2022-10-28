@@ -1,5 +1,3 @@
-import java.io.ByteArrayOutputStream
-
 plugins {
     kotlin("jvm") version Versions.KOTLIN
     kotlin("plugin.serialization") version Versions.KOTLIN
@@ -13,7 +11,7 @@ plugins {
 }
 
 group = "tv.blademaker"
-val versionObj = Version(1, 0, 0, "alpha.1")
+val versionObj = Version(1, 0, 0, "alpha.2")
 version = versionObj.toString()
 
 repositories {
@@ -30,6 +28,7 @@ dependencies {
     implementation(Deps.COROUTINES_CORE)
     implementation(Deps.COROUTINES_JDK8)
     implementation(Deps.KOTLINX_SERIALIZATION_JSON)
+    api(Deps.CAFFEINE)
 
     api(Deps.SLF4J_API)
 
@@ -67,6 +66,8 @@ val javadocJar = tasks.register<Jar>("javadocJar") {
 
 java {
     withSourcesJar()
+    targetCompatibility = JavaVersion.VERSION_11
+    sourceCompatibility = JavaVersion.VERSION_11
 }
 
 val mavenCentralRepository = if (versionObj.isSnapshot)

@@ -2,9 +2,7 @@ package tv.blademaker.kotify.services
 
 import kotlinx.serialization.builtins.ListSerializer
 import tv.blademaker.kotify.Kotify
-import tv.blademaker.kotify.models.Album
-import tv.blademaker.kotify.models.AlbumPagination
-import tv.blademaker.kotify.models.UserAlbumsPage
+import tv.blademaker.kotify.models.*
 import tv.blademaker.kotify.models.paginatedRequest
 import tv.blademaker.kotify.request.Request
 import tv.blademaker.kotify.request.RequestConfiguration
@@ -18,7 +16,9 @@ class AlbumsService(override val kotify: Kotify) : Service {
     }
 
     suspend fun getAlbum(id: String): Album {
-        return get("/v1/albums/$id", AlbumSerializer).execute()
+        return kotify.cache.getAlbum(id) {
+            get("/v1/albums/$id", AlbumSerializer).execute()
+        }
     }
 
     suspend fun getSeveralAlbums(vararg ids: String): List<Album> {
@@ -47,7 +47,11 @@ class AlbumsService(override val kotify: Kotify) : Service {
             .execute()
     }
 
-    suspend fun getAlbumTracks(album: Album, pages: Int = 6) = paginatedRequest(20, 0, pages) { limit, offset ->
-        getAlbumTracksPage(album.id, limit, offset)
+    suspend fun getAlbumTracks(albumId: String, pages: Int = 6): List<Track> {
+        return kotify.cache.getAlbumTracks(albumId) {
+            paginatedRequest(20, 0, pages) { limit, offset ->
+                getAlbumTracksPage(albumId, limit, offset)
+            }
+        }
     }
 }

@@ -5,27 +5,23 @@ import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.json.Json
 import org.slf4j.LoggerFactory
-import tv.blademaker.kotify.internal.ContextAccessToken
+import tv.blademaker.kotify.cache.KotifyCache
+import tv.blademaker.kotify.cache.impl.CaffeineCache
 import tv.blademaker.kotify.internal.CredentialsManager
 import tv.blademaker.kotify.request.Request
 import tv.blademaker.kotify.services.*
 import java.io.Closeable
 import java.util.*
 import java.util.concurrent.atomic.AtomicLong
-import kotlin.contracts.ExperimentalContracts
-import kotlin.contracts.InvocationKind
-import kotlin.contracts.contract
 
 @Suppress("unused")
 class Kotify(
     clientID: String,
-    clientSecret: String
+    clientSecret: String,
+    val cache: KotifyCache = CaffeineCache()
 ) : Closeable {
 
     internal val credentials = CredentialsManager(this, clientID, clientSecret)

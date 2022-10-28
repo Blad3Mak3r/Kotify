@@ -7,13 +7,14 @@ import tv.blademaker.kotify.models.PlaylistPagination
 import tv.blademaker.kotify.models.SeveralTracksPage
 import tv.blademaker.kotify.models.Track
 import tv.blademaker.kotify.models.paginatedRequest
-import tv.blademaker.kotify.request.Request
 import tv.blademaker.kotify.utils.withAccessToken
 
 class TracksService(override val kotify: Kotify) : Service {
 
-    suspend fun getTrack(id: String): Track {
-        return get("/v1/tracks/$id", Track.serializer()).execute()
+    suspend fun getTrack(trackId: String): Track {
+        return kotify.cache.getTrack(trackId) {
+            get("/v1/tracks/$trackId", Track.serializer()).execute()
+        }
     }
 
     suspend fun getSeveralTrack(vararg ids: String): SeveralTracksPage {
