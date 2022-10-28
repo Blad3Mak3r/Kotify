@@ -47,10 +47,10 @@ class AlbumsService(override val kotify: Kotify) : Service {
             .execute()
     }
 
-    suspend fun getAlbumTracks(album: Album, pages: Int = 6): List<Track> {
-        return kotify.cache.getAlbumTracks(album.id) {
+    suspend fun getAlbumTracks(albumId: String, pages: Int = 6): List<Track> {
+        return kotify.cache.getAlbumTracks(albumId) {
             paginatedRequest(20, 0, pages) { limit, offset ->
-                getAlbumTracksPage(album.id, limit, offset)
+                getAlbumTracksPage(albumId, limit, offset)
             }
         }
     }

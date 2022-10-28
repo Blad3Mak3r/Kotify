@@ -23,14 +23,14 @@ class KotifyTest {
 
     @Test
     fun `1 - Get Album by ID`() = runBlocking {
-        val album = kotify.albums.get(albumID)
+        val album = kotify.albums.getAlbum(albumID)
         assert(album.id == albumID) { "albumID not equals" }
     }
 
     @Test
     fun `2 - Get Album with invalid ID`() = runBlocking {
         val result = try {
-            kotify.albums.get(invalidAlbumID)
+            kotify.albums.getAlbum(invalidAlbumID)
             null
         } catch (e: KotifyRequestException) {
             e
@@ -46,7 +46,7 @@ class KotifyTest {
     @Test
     fun `3 - Get Album with not found ID`() = runBlocking {
         val result = try {
-            kotify.albums.get(notFoundAlbumID)
+            kotify.albums.getAlbum(notFoundAlbumID)
             null
         } catch (e: KotifyRequestException) {
             e
@@ -66,8 +66,8 @@ class KotifyTest {
     @Test
     fun `4 - Get Album tracks`() = runBlocking {
         val expected = 12
-        val tracks = kotify.albums.getTracks(albumID)
-        assert(tracks.total == expected) { "not expected value" }
+        val tracks = kotify.albums.getAlbumTracks(albumID)
+        assert(tracks.size == expected) { "not expected value" }
     }
 
     @Test
@@ -76,13 +76,13 @@ class KotifyTest {
 
         val totalExpected = 2
 
-        val playlist = kotify.playlists.get(id)
+        val playlist = kotify.playlists.getPlaylist(id)
 
         assert(playlist.id == id) {
             "not equal ids"
         }
 
-        val tracks = kotify.playlists.retrieveTracksFromPlaylist(playlist)
+        val tracks = kotify.playlists.getPlaylistTracks(playlist.id)
 
         assert(tracks.size == totalExpected) {
             "received a total of ${tracks.size} but required is $totalExpected"
@@ -91,9 +91,7 @@ class KotifyTest {
 
     @Test
     fun `6 - Get recommendations by track id`() = runBlocking {
-        val trackIds = listOf("03UrZgTINDqvnUMbbIMhql")
-
-        val recommendations = kotify.recommendations.byTracksId(trackIds)
+        val recommendations = kotify.recommendations.byTracksId("03UrZgTINDqvnUMbbIMhql")
 
         val tracks = recommendations.tracks
 
