@@ -91,7 +91,7 @@ class KotifyTest {
 
     @Test
     fun `6 - Get recommendations by track id`() = runBlocking {
-        val recommendations = kotify.recommendations.byTracksId("03UrZgTINDqvnUMbbIMhql")
+        val recommendations = kotify.recommendations.byTrackIds("03UrZgTINDqvnUMbbIMhql")
 
         val tracks = recommendations.tracks
 
