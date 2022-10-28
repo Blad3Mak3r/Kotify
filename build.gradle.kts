@@ -1,5 +1,3 @@
-import java.io.ByteArrayOutputStream
-
 plugins {
     kotlin("jvm") version Versions.KOTLIN
     kotlin("plugin.serialization") version Versions.KOTLIN
@@ -30,6 +28,7 @@ dependencies {
     implementation(Deps.COROUTINES_CORE)
     implementation(Deps.COROUTINES_JDK8)
     implementation(Deps.KOTLINX_SERIALIZATION_JSON)
+    api(Deps.CAFFEINE)
 
     api(Deps.SLF4J_API)
 

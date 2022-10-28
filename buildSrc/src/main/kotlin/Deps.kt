@@ -10,10 +10,13 @@ object Deps {
 
     const val SLF4J_API = "org.slf4j:slf4j-api:${Versions.SLF4J_API}"
 
+    const val CAFFEINE = "com.github.ben-manes.caffeine:caffeine:${Versions.CAFFEINE}"
+
     const val LOGBACK = "ch.qos.logback:logback-classic:${Versions.LOGBACK}"
 }
 
 object Versions {
+    const val CAFFEINE = "3.1.1"
     const val COROUTINES = "1.6.1"
     const val KOTLIN = "1.6.20"
     const val KOTLIN_SERIALIZATION = "1.3.1"
