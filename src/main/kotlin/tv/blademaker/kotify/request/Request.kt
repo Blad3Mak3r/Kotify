@@ -8,6 +8,7 @@ import io.ktor.utils.io.jvm.javaio.*
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.serialization.KSerializer
+import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
 import tv.blademaker.kotify.Kotify
@@ -48,6 +49,7 @@ class Request<T : Any>(
         return this
     }
 
+    @Suppress("UNCHECKED_CAST")
     suspend fun execute(): T = coroutineScope {
         kotify.getDelay?.let { delay(it) }
 
@@ -64,6 +66,9 @@ class Request<T : Any>(
                 }
             }
 
+            if (serializer == Unit.serializer()) {
+                return@coroutineScope Unit as T
+            }
             json.decodeFromString(serializer, response.bodyAsText())
         } catch (ex: ClientRequestException) {
             val status = ex.response.status.value
