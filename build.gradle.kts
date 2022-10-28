@@ -1,3 +1,5 @@
+import java.io.ByteArrayOutputStream
+
 plugins {
     kotlin("jvm") version Versions.KOTLIN
     kotlin("plugin.serialization") version Versions.KOTLIN
@@ -10,9 +12,34 @@ plugins {
     java
 }
 
+val gitTag: String? by lazy {
+    try {
+        val stdout = ByteArrayOutputStream()
+        rootProject.exec {
+            commandLine("git", "describe", "--tags", "--long")
+            standardOutput = stdout
+        }
+
+        stdout.toString().trim()
+    } catch(e: Throwable) {
+        null
+    }
+}
+
+val gitHash: String by lazy {
+    val stdout = ByteArrayOutputStream()
+    rootProject.exec {
+        commandLine("git", "rev-parse", "--short", "HEAD")
+        standardOutput = stdout
+    }
+
+    stdout.toString().trim()
+}
+
+val releaseTag: String? = System.getenv("RELEASE_TAG")
+
 group = "tv.blademaker"
-val versionObj = Version(1, 0, 0, "alpha.2")
-version = versionObj.toString()
+version = if (releaseTag == null) "$gitTag-SNAPSHOT" else releaseTag
 
 repositories {
     mavenCentral()
@@ -70,7 +97,7 @@ java {
     sourceCompatibility = JavaVersion.VERSION_11
 }
 
-val mavenCentralRepository = if (versionObj.isSnapshot)
+val mavenCentralRepository = if (releaseTag == null)
     "https://s01.oss.sonatype.org/content/repositories/snapshots/"
 else
     "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
@@ -124,19 +151,6 @@ publishing {
                 }
             }
         }
-    }
-}
-
-class Version(
-    private val major: Int,
-    private val minor: Int,
-    private val revision: Int,
-    val candidate: String? = null
-) {
-    val isSnapshot = candidate != null
-
-    override fun toString(): String {
-        return "$major.$minor.$revision" + if (candidate != null) "-$candidate" else ""
     }
 }
 
