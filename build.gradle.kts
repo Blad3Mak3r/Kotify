@@ -48,19 +48,14 @@ repositories {
 dependencies {
     implementation(kotlin("stdlib", Versions.KOTLIN))
 
-    implementation(Deps.KTOR_CLIENT_CORE)
-    implementation(Deps.KTOR_CLIENT_CIO)
-    implementation(Deps.KTOR_CLIENT_CONTENT_NEGOTIATION)
-    implementation(Deps.KTOR_SERIALIZATION_JSON)
-    implementation(Deps.COROUTINES_CORE)
-    implementation(Deps.COROUTINES_JDK8)
-    implementation(Deps.KOTLINX_SERIALIZATION_JSON)
-    api(Deps.CAFFEINE)
+    implementation(libs.bundles.ktor.client)
+    implementation(libs.ktor.serialization.json)
+    implementation(libs.bundles.kotlinx.coroutines)
+    api(libs.caffeine)
 
-    api(Deps.SLF4J_API)
+    api(libs.slf4j.api)
 
     testImplementation("junit:junit:4.13.2")
-    testImplementation(Deps.LOGBACK)
 }
 
 val dokkaOutputDir = "$buildDir/dokka"
@@ -70,7 +65,7 @@ tasks {
         this.kotlinOptions {
             jvmTarget = "11"
             freeCompilerArgs = listOf(
-                "-Xopt-in=kotlin.RequiresOptIn"
+                "-opt-in=kotlin.RequiresOptIn"
             )
         }
 
