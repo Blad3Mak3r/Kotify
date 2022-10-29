@@ -1,4 +1,4 @@
-# Kotify ![Maven Central](https://img.shields.io/maven-central/v/tv.blademaker/kotify) ![GitHub release (latest by date)](https://img.shields.io/github/v/release/Blad3Mak3r/Kotify)
+# Kotify ![Maven Central](https://img.shields.io/maven-central/v/tv.blademaker/kotify) ![GitHub release (latest by date)](https://img.shields.io/github/v/release/Blad3Mak3r/Kotify) [![](https://jitpack.io/v/tv.blademaker/Kotify.svg)](https://jitpack.io/#tv.blademaker/Kotify)
 Advanced coroutine-based Spotify API wrapper for Kotlin.
 
 ## Contens
