@@ -1,8 +1,11 @@
-name: Upload to Maven Central
+name: CI Release
 
 on:
   release:
     types: [ 'published' ]
+
+env:
+  RELEASE_TAG: ${{ github.event.release.tag_name }}
 
 jobs:
   build:
