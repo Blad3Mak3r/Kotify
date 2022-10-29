@@ -39,7 +39,7 @@ val gitHash: String by lazy {
 val releaseTag: String? = System.getenv("RELEASE_TAG")
 
 group = "tv.blademaker"
-version = if (releaseTag == null) "$gitTag-SNAPSHOT" else releaseTag
+version = releaseTag ?: "$gitHash-SNAPSHOT"
 
 repositories {
     mavenCentral()
