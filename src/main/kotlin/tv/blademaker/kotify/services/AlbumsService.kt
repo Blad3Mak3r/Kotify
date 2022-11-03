@@ -35,7 +35,7 @@ class AlbumsService(override val kotify: Kotify) : Service {
     }
 
     suspend fun getUserSavedAlbums(accessToken: String, pages: Int = 6) = withAccessToken(accessToken, this) {
-        paginatedRequest(20, 0, pages) { limit, offset ->
+        paginatedRequest(50, 0, pages) { limit, offset ->
             getUserSavedAlbumsPage(limit, offset)
         }
     }
@@ -49,7 +49,7 @@ class AlbumsService(override val kotify: Kotify) : Service {
 
     suspend fun getAlbumTracks(albumId: String, pages: Int = 6): List<Track> {
         return kotify.cache.getAlbumTracks(albumId) {
-            paginatedRequest(20, 0, pages) { limit, offset ->
+            paginatedRequest(50, 0, pages) { limit, offset ->
                 getAlbumTracksPage(albumId, limit, offset)
             }
         }

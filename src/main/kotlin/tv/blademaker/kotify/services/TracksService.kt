@@ -18,6 +18,9 @@ class TracksService(override val kotify: Kotify) : Service {
     }
 
     suspend fun getSeveralTrack(vararg ids: String): SeveralTracksPage {
+        check(ids.size in 1..50) {
+            "ids must be higher than 0 or less than 50"
+        }
         return get("/v1/tracks", SeveralTracksPage.serializer())
             .addQuery("ids", ids.joinToString(","))
             .execute()

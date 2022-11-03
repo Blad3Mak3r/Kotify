@@ -33,7 +33,7 @@ class PlaylistsService(override val kotify: Kotify) : Service {
 
     suspend fun getPlaylistTracks(playlistId: String, pages: Int = 6): List<Track> {
         return kotify.cache.getPlaylistTracks(playlistId) {
-            paginatedRequest(20, 0, pages) { limit, offset ->
+            paginatedRequest(50, 0, pages) { limit, offset ->
                 getPlaylistTracksPage(playlistId, limit, offset)
             }.map { it.track }
         }
