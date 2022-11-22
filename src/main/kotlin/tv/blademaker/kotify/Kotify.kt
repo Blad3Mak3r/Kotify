@@ -97,6 +97,11 @@ class Kotify(
     val recommendations = RecommendationsService(this)
 
     /**
+     * Search service.
+     */
+    val search = SearchService(this)
+
+    /**
      * Shows service.
      */
     val shows = ShowsService(this)

@@ -16,7 +16,7 @@ val gitTag: String? by lazy {
     try {
         val stdout = ByteArrayOutputStream()
         rootProject.exec {
-            commandLine("git", "describe", "--tags", "--long")
+            commandLine("git", "describe", "--tags", "--abbrev=0")
             standardOutput = stdout
         }
 
