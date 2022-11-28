@@ -8,6 +8,8 @@ on:
     branches: 
       - main
       
+env:
+  SNAPSHOT: true
 
 jobs:
   build:
