@@ -4,9 +4,6 @@ on:
   release:
     types: [ 'published' ]
 
-env:
-  RELEASE_TAG: ${{ github.event.release.tag_name }}
-
 jobs:
   build:
     runs-on: ubuntu-latest
