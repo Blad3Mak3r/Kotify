@@ -34,5 +34,6 @@ data class PartialAlbum(
     val images: List<Image>,
     @SerialName("release_date") val releaseDate: String,
     @SerialName("release_date_precision") val releaseDatePrecision: String,
-    val type: String
+    val type: String,
+    val artist: List<Artist>? = null
 )

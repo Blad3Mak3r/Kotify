@@ -2,6 +2,7 @@ package tv.blademaker.kotify.models
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import java.util.Optional
 
 @Serializable
 data class Playlist(
@@ -40,7 +41,7 @@ data class PartialPlaylist(
     val collaborative: Boolean,
     val href: String,
     val images: List<Image>,
-    val public: Boolean,
+    val public: Boolean? = null,
     val type: String,
     val uri: String
 )

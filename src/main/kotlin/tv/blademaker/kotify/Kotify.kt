@@ -5,6 +5,7 @@ import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.json.Json
 import org.slf4j.LoggerFactory
@@ -128,6 +129,7 @@ class Kotify(
 
         const val VERSION = "0.4.6"
 
+        @OptIn(ExperimentalSerializationApi::class)
         val JSON = Json {
             isLenient = true
             ignoreUnknownKeys = true

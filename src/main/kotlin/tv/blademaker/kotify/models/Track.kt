@@ -35,12 +35,3 @@ data class Track(
         val upc: String? = null
     )
 }
-
-@Serializable
-data class PartialTrack(
-    val id: String,
-    val name: String,
-    val uri: String
-)
-
-typealias TrackList = List<Track>

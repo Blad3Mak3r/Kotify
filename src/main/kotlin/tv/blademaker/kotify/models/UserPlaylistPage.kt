@@ -11,7 +11,7 @@ data class UserPlaylistsPage(
     override val offset: Int?,
     override val previous: String?,
     override val total: Int
-) : ItemPaginator<PartialPlaylist> {
+) : ItemPagination<PartialPlaylist> {
     override val nextValues: NextValues? = nextValues(this)
 }
 
@@ -24,6 +24,6 @@ data class UserAlbumsPage(
     override val offset: Int?,
     override val previous: String?,
     override val total: Int
-) : ItemPaginator<Album> {
+) : ItemPagination<Album> {
     override val nextValues: NextValues? = nextValues(this)
 }
