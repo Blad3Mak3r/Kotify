@@ -92,7 +92,7 @@ java {
     sourceCompatibility = JavaVersion.VERSION_11
 }
 
-val mavenCentralRepository = if (releaseTag == null)
+val mavenCentralRepository = if (isSnapshot)
     "https://s01.oss.sonatype.org/content/repositories/snapshots/"
 else
     "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
