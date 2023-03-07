@@ -36,10 +36,10 @@ val gitHash: String by lazy {
     stdout.toString().trim()
 }
 
-val releaseTag: String? = System.getenv("RELEASE_TAG")
-
 group = "tv.blademaker"
-version = releaseTag ?: "$gitHash-SNAPSHOT"
+val isSnapshot = System.getenv("OSSRH_SNAPSHOT") != null
+
+version = (gitTag ?: gitHash).plus(if (isSnapshot) "-SNAPSHOT" else "")
 
 repositories {
     mavenCentral()
