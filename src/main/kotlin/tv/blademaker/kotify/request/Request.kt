@@ -10,13 +10,9 @@ import kotlinx.coroutines.delay
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.decodeFromStream
 import tv.blademaker.kotify.Kotify
-import tv.blademaker.kotify.exceptions.KotifyException
 import tv.blademaker.kotify.exceptions.KotifyRequestException
 import tv.blademaker.kotify.internal.ContextAccessToken
-import java.util.concurrent.atomic.AtomicReference
-import kotlin.coroutines.CoroutineContext
 
 class Request<T : Any>(
     private val kotify: Kotify,
@@ -27,6 +23,11 @@ class Request<T : Any>(
 
     private val url: URLBuilder = URLBuilder(Kotify.baseUrl).apply {
         path(path)
+    }
+
+    fun addEncodedQuery(name: String, encodedValue: String): Request<T> {
+        url.encodedParameters.append(name, encodedValue)
+        return this
     }
 
     fun addQuery(name: String, value: String): Request<T> {

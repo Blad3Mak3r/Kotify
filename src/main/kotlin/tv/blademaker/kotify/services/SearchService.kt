@@ -15,7 +15,7 @@ class SearchService(override val kotify: Kotify) : Service {
         require(limit in 1..50) { "not valid limit" }
         require(offset >= 0) { "not valid offset" }
         return get("/v1/search", TracksSearchResult.serializer())
-            .addQuery("q", URLEncoder.encode(query, StandardCharsets.UTF_8))
+            .addEncodedQuery("q", URLEncoder.encode(query, StandardCharsets.UTF_8))
             .addQuery("type", "track")
             .limit(limit)
             .offset(offset)
@@ -28,7 +28,7 @@ class SearchService(override val kotify: Kotify) : Service {
         require(offset >= 0) { "not valid offset" }
 
         return get("/v1/search", ArtistsSearchResult.serializer())
-            .addQuery("q", URLEncoder.encode(query, StandardCharsets.UTF_8))
+            .addEncodedQuery("q", URLEncoder.encode(query, StandardCharsets.UTF_8))
             .addQuery("type", "artist")
             .limit(limit)
             .offset(offset)
@@ -41,7 +41,7 @@ class SearchService(override val kotify: Kotify) : Service {
         require(offset >= 0) { "not valid offset" }
 
         return get("/v1/search", PlaylistsSearchResult.serializer())
-            .addQuery("q", URLEncoder.encode(query, StandardCharsets.UTF_8))
+            .addEncodedQuery("q", URLEncoder.encode(query, StandardCharsets.UTF_8))
             .addQuery("type", "playlist")
             .limit(limit)
             .offset(offset)
@@ -54,7 +54,7 @@ class SearchService(override val kotify: Kotify) : Service {
         require(offset >= 0) { "not valid offset" }
 
         return get("/v1/search", AlbumsSearchResult.serializer())
-            .addQuery("q", URLEncoder.encode(query, StandardCharsets.UTF_8))
+            .addEncodedQuery("q", URLEncoder.encode(query, StandardCharsets.UTF_8))
             .addQuery("type", "album")
             .limit(limit)
             .offset(offset)
