@@ -4,9 +4,9 @@ dependencyResolutionManagement {
     versionCatalogs {
         create("libs") {
 
-            val caffeine = version("caffeine", "3.1.1")
-            val coroutines = version("coroutines", "1.6.4")
-            val ktor = version("ktor", "2.1.3")
+            val caffeine = version("caffeine", "3.1.8")
+            val coroutines = version("coroutines", "1.9.0")
+            val ktor = version("ktor", "3.0.0")
             val slf4j = version("slf4j", "1.7.32")
 
             library("caffeine", "com.github.ben-manes.caffeine", "caffeine").versionRef(caffeine)

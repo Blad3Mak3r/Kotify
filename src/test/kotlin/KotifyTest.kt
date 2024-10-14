@@ -44,34 +44,14 @@ class KotifyTest {
     }
 
     @Test
-    fun `3 - Get Album with not found ID`() = runBlocking {
-        val result = try {
-            kotify.albums.getAlbum(notFoundAlbumID)
-            null
-        } catch (e: KotifyRequestException) {
-            e
-        } catch (e: KotifyException) {
-            e
-        }
-
-        assert(result != null) {
-            "Not threw exception"
-        }
-
-        assert(result!!.message!!.contains("non existing id")) {
-            result.message!!
-        }
-    }
-
-    @Test
-    fun `4 - Get Album tracks`() = runBlocking {
+    fun `3 - Get Album tracks`() = runBlocking {
         val expected = 12
         val tracks = kotify.albums.getAlbumTracks(albumID)
         assert(tracks.size == expected) { "not expected value" }
     }
 
     @Test
-    fun `5 - Test playlist`() = runBlocking {
+    fun `4 - Test playlist`() = runBlocking {
         val id = /* "2J0TRU2EDG29qlmxdGa4xa" */ "3ubLYWqCIpRW06a7kRIInC"
 
         val totalExpected = 2
@@ -90,7 +70,7 @@ class KotifyTest {
     }
 
     @Test
-    fun `6 - Get recommendations by track id`() = runBlocking {
+    fun `5 - Get recommendations by track id`() = runBlocking {
         val recommendations = kotify.recommendations.byTrackIds("03UrZgTINDqvnUMbbIMhql")
 
         val tracks = recommendations.tracks

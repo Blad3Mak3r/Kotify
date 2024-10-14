@@ -5,6 +5,7 @@ plugins {
     kotlin("plugin.serialization") version Versions.KOTLIN
 
     id("org.jetbrains.dokka") version "1.6.0"
+    id("com.github.ben-manes.versions") version Versions.VERSIONS
 
     `maven-publish`
     `java-library`
