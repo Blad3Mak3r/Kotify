@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import java.io.ByteArrayOutputStream
 
 plugins {
@@ -6,6 +7,7 @@ plugins {
 
     id("org.jetbrains.dokka") version "1.6.0"
     id("com.github.ben-manes.versions") version Versions.VERSIONS
+    id("org.jreleaser") version "1.14.0"
 
     `maven-publish`
     `java-library`
@@ -59,15 +61,16 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
 }
 
-val dokkaOutputDir = "$buildDir/dokka"
+val dokkaOutputDir = "${layout.buildDirectory}/dokka"
 
 tasks {
     withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-        this.kotlinOptions {
-            jvmTarget = "11"
+        this.compilerOptions {
             freeCompilerArgs = listOf(
                 "-opt-in=kotlin.RequiresOptIn"
             )
+            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11)
+            apiVersion.set(KotlinVersion.KOTLIN_2_0)
         }
 
     }
@@ -98,6 +101,8 @@ val mavenCentralRepository = if (isSnapshot)
 else
     "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
 
+
+
 publishing {
     repositories {
         maven {
@@ -117,7 +122,7 @@ publishing {
             groupId = project.group as String
             version = project.version as String
             from(components["java"])
-            artifact(javadocJar)
+            //artifact(javadocJar)
 
             pom {
                 name.set(project.name)
