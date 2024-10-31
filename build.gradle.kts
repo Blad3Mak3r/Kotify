@@ -1,3 +1,4 @@
+import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import java.io.ByteArrayOutputStream
@@ -6,7 +7,7 @@ plugins {
     kotlin("jvm") version Versions.KOTLIN
     kotlin("plugin.serialization") version Versions.KOTLIN
 
-    id("org.jetbrains.dokka") version "1.6.0"
+    id("org.jetbrains.dokka") version "1.9.20"
     id("com.github.ben-manes.versions") version Versions.VERSIONS
     id("org.jreleaser") version "1.14.0"
 
@@ -76,19 +77,12 @@ tasks {
 
     }
 
-    getByName<org.jetbrains.dokka.gradle.DokkaTask>("dokkaHtml") {
-        outputDirectory.set(file(dokkaOutputDir))
-    }
 }
 
-val deleteDokkaOutputDir by tasks.register<Delete>("deleteDokkaOutputDirectory") {
-    delete(dokkaOutputDir)
-}
-
-val javadocJar = tasks.register<Jar>("javadocJar") {
-    dependsOn(deleteDokkaOutputDir, tasks.dokkaHtml)
+val dokkaJavadocJar = tasks.register<Jar>("dokkaJavadocJar") {
+    dependsOn(tasks.dokkaJavadoc)
+    from(tasks.dokkaJavadoc.flatMap { it.outputDirectory })
     archiveClassifier.set("javadoc")
-    from(dokkaOutputDir)
 }
 
 java {
@@ -121,7 +115,7 @@ publishing {
             groupId = project.group as String
             version = project.version as String
             from(components["java"])
-            //artifact(javadocJar)
+            artifact(dokkaJavadocJar)
 
             pom {
                 name.set(project.name)
