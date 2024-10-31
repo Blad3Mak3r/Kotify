@@ -8,6 +8,7 @@ plugins {
 
     id("org.jetbrains.dokka") version "1.6.0"
     id("com.github.ben-manes.versions") version Versions.VERSIONS
+    id("org.jreleaser") version "1.14.0"
 
     `maven-publish`
     `java-library`
@@ -72,6 +73,7 @@ tasks {
                 "-opt-in=kotlin.RequiresOptIn"
             )
         }
+
     }
 
     getByName<org.jetbrains.dokka.gradle.DokkaTask>("dokkaHtml") {
@@ -87,9 +89,6 @@ val javadocJar = tasks.register<Jar>("javadocJar") {
     dependsOn(deleteDokkaOutputDir, tasks.dokkaHtml)
     archiveClassifier.set("javadoc")
     from(dokkaOutputDir)
-    doLast {
-
-    }
 }
 
 java {
@@ -122,7 +121,7 @@ publishing {
             groupId = project.group as String
             version = project.version as String
             from(components["java"])
-            artifact(javadocJar)
+            //artifact(javadocJar)
 
             pom {
                 name.set(project.name)
