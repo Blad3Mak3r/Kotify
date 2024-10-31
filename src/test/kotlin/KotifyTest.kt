@@ -1,10 +1,10 @@
+import com.github.blad3mak3r.kotify.Kotify
+import com.github.blad3mak3r.kotify.exceptions.KotifyException
+import com.github.blad3mak3r.kotify.exceptions.KotifyRequestException
 import kotlinx.coroutines.runBlocking
 import org.junit.FixMethodOrder
 import org.junit.Test
 import org.junit.runners.MethodSorters
-import tv.blademaker.kotify.Kotify
-import tv.blademaker.kotify.exceptions.KotifyException
-import tv.blademaker.kotify.exceptions.KotifyRequestException
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 class KotifyTest {

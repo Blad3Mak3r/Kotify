@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import java.io.ByteArrayOutputStream
 
 plugins {
@@ -37,7 +39,7 @@ val gitHash: String by lazy {
     stdout.toString().trim()
 }
 
-group = "tv.blademaker"
+group = "com.github.blad3mak3r"
 val isSnapshot = System.getenv("OSSRH_SNAPSHOT") != null
 
 version = (gitTag ?: gitHash).plus(if (isSnapshot) "-SNAPSHOT" else "")
@@ -59,17 +61,17 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
 }
 
-val dokkaOutputDir = "$buildDir/dokka"
+val dokkaOutputDir = "${layout.buildDirectory}/dokka"
 
 tasks {
     withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-        this.kotlinOptions {
-            jvmTarget = "11"
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_20)
+            apiVersion.set(KotlinVersion.KOTLIN_2_0)
             freeCompilerArgs = listOf(
                 "-opt-in=kotlin.RequiresOptIn"
             )
         }
-
     }
 
     getByName<org.jetbrains.dokka.gradle.DokkaTask>("dokkaHtml") {
@@ -85,12 +87,15 @@ val javadocJar = tasks.register<Jar>("javadocJar") {
     dependsOn(deleteDokkaOutputDir, tasks.dokkaHtml)
     archiveClassifier.set("javadoc")
     from(dokkaOutputDir)
+    doLast {
+
+    }
 }
 
 java {
     withSourcesJar()
-    targetCompatibility = JavaVersion.VERSION_11
-    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_20
+    sourceCompatibility = JavaVersion.VERSION_20
 }
 
 val mavenCentralRepository = if (isSnapshot)
