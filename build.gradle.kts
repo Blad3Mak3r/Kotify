@@ -67,7 +67,7 @@ val dokkaOutputDir = "${layout.buildDirectory}/dokka"
 tasks {
     withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
         compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_20)
+            jvmTarget.set(JvmTarget.JVM_17)
             apiVersion.set(KotlinVersion.KOTLIN_2_0)
             freeCompilerArgs = listOf(
                 "-opt-in=kotlin.RequiresOptIn"
@@ -93,8 +93,8 @@ val javadocJar = tasks.register<Jar>("javadocJar") {
 
 java {
     withSourcesJar()
-    targetCompatibility = JavaVersion.VERSION_20
-    sourceCompatibility = JavaVersion.VERSION_20
+    targetCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = JavaVersion.VERSION_17
 }
 
 val mavenCentralRepository = if (isSnapshot)
