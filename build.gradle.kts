@@ -99,18 +99,17 @@ else
 publishing {
     repositories {
         maven {
-            name = "MavenCentral"
-            url = uri(mavenCentralRepository)
-
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/blad3mak3r/kotify")
             credentials {
-                username = System.getenv("OSSRH_USERNAME")
-                password = System.getenv("OSSRH_PASSWORD")
+                username = System.getenv("GITHUB_ACTOR")
+                password = System.getenv("GITHUB_TOKEN")
             }
         }
     }
 
     publications {
-        create<MavenPublication>("MavenCentral") {
+        create<MavenPublication>("GitHubPackages") {
             artifactId = "kotify"
             groupId = project.group as String
             version = project.version as String
