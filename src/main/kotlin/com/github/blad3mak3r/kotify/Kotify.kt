@@ -127,6 +127,8 @@ class Kotify(
         internal val log = LoggerFactory.getLogger("Kotify")
         internal var baseUrl: String = "https://api.spotify.com"
 
+        var market: String? = null
+
         const val VERSION = "0.4.6"
 
         @OptIn(ExperimentalSerializationApi::class)

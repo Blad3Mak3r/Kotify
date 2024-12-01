@@ -43,6 +43,7 @@ class SearchService(override val kotify: Kotify) : Service {
         return get("/v1/search", PlaylistsSearchResult.serializer())
             .addEncodedQuery("q", URLEncoder.encode(query, StandardCharsets.UTF_8))
             .addQuery("type", "playlist")
+            .apply { Kotify.market?.let { addQuery("market", it) } }
             .limit(limit)
             .offset(offset)
             .execute()

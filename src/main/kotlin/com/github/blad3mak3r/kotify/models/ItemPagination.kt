@@ -7,7 +7,7 @@ import java.net.URL
 
 interface ItemPagination<T : Any> {
     val href: String
-    val items: List<T>
+    val items: List<T?>
     val limit: Int
     val next: String?
     val offset: Int?
@@ -40,13 +40,13 @@ internal suspend fun <T : Any> paginatedRequest(limitPerPage: Int, cursor: Int, 
     var next = page.nextValues
     var currentPage = 1
 
-    items.addAll(page.items)
+    items.addAll(page.items.filterNotNull())
 
     while (next != null && currentPage <= pages) {
         currentPage++
         page = fn(limitPerPage, next.offset)
         next = page.nextValues
-        items.addAll(page.items)
+        items.addAll(page.items.filterNotNull())
     }
 
     return items
@@ -95,7 +95,7 @@ data class ArtistsPagination(
 data class PlaylistPagination(
     override val href: String,
     @Serializable(with = ItemListSerializer::class)
-    override val items: List<PlaylistPagination.Item>,
+    override val items: List<Item>,
     override val limit: Int,
     override val next: String? = null,
     override val offset: Int? = null,
@@ -117,7 +117,7 @@ data class PlaylistPagination(
 @Serializable
 data class PlaylistsPagination(
     override val href: String,
-    override val items: List<PartialPlaylist>,
+    override val items: List<PartialPlaylist?>,
     override val limit: Int,
     override val next: String? = null,
     override val offset: Int? = null,

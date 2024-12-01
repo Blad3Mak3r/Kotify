@@ -18,7 +18,9 @@ class KotifyTest {
         var kotify: Kotify = Kotify(
             clientID = System.getenv("CLIENT_ID"),
             clientSecret = System.getenv("CLIENT_SECRET")
-        )
+        ).apply {
+            Kotify.market = "ES"
+        }
     }
 
     @Test
@@ -52,9 +54,9 @@ class KotifyTest {
 
     @Test
     fun `4 - Test playlist`() = runBlocking {
-        val id = /* "2J0TRU2EDG29qlmxdGa4xa" */ "3ubLYWqCIpRW06a7kRIInC"
+        val id = /* "2J0TRU2EDG29qlmxdGa4xa" */ "2EoheVFjqIxgJMb8VnDRtZ"
 
-        val totalExpected = 2
+        val totalExpected = 211
 
         val playlist = kotify.playlists.getPlaylist(id)
 
@@ -70,7 +72,19 @@ class KotifyTest {
     }
 
     @Test
-    fun `5 - Get recommendations by track id`() = runBlocking {
+    fun `5 - Search for playlists`() = runBlocking {
+        val result = kotify.search.searchPlaylists("KPOP TRENDS")
+
+
+        assert(result.playlists.items.isNotEmpty()) {
+            "empty recommendations"
+        }
+
+        println("Got ${result.playlists.items.size} tracks")
+    }
+
+    @Test
+    fun `6 - Get recommendations by track id`() = runBlocking {
         val recommendations = kotify.recommendations.byTrackIds("03UrZgTINDqvnUMbbIMhql")
 
         val tracks = recommendations.tracks
