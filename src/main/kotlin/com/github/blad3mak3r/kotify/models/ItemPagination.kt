@@ -68,13 +68,13 @@ data class AlbumPagination(
 @Serializable
 data class AlbumsPagination(
     override val href: String,
-    override val items: List<PartialAlbum>,
+    override val items: List<SimplifiedAlbum>,
     override val limit: Int,
     override val next: String? = null,
     override val offset: Int? = null,
     override val previous: String? = null,
     override val total: Int
-) : ItemPagination<PartialAlbum> {
+) : ItemPagination<SimplifiedAlbum> {
     override val nextValues: NextValues? = nextValues(this)
 }
 
@@ -117,13 +117,13 @@ data class PlaylistPagination(
 @Serializable
 data class PlaylistsPagination(
     override val href: String,
-    override val items: List<PartialPlaylist?>,
+    override val items: List<SimplifiedPlaylist?>,
     override val limit: Int,
     override val next: String? = null,
     override val offset: Int? = null,
     override val previous: String? = null,
     override val total: Int
-) : ItemPagination<PartialPlaylist> {
+) : ItemPagination<SimplifiedPlaylist> {
     override val nextValues: NextValues? = nextValues(this)
 }
 

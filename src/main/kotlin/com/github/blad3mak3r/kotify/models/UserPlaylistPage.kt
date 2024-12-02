@@ -5,13 +5,13 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class UserPlaylistsPage(
     override val href: String,
-    override val items: List<PartialPlaylist>,
+    override val items: List<SimplifiedPlaylist>,
     override val limit: Int,
     override val next: String?,
     override val offset: Int?,
     override val previous: String?,
     override val total: Int
-) : ItemPagination<PartialPlaylist> {
+) : ItemPagination<SimplifiedPlaylist> {
     override val nextValues: NextValues? = nextValues(this)
 }
 

@@ -19,9 +19,11 @@ class AlbumsService(override val kotify: Kotify) : Service {
     }
 
     suspend fun getSeveralAlbums(vararg ids: String): List<Album> {
-        return get("/v1/albums", ListAlbumSerializer)
+        return get("/v1/albums", SeveralAlbumResponse.serializer())
             .addQuery("ids", ids.joinToString(","))
             .execute()
+            .albums
+
     }
 
     private suspend fun getUserSavedAlbumsPage(limit: Int = 20, offset: Int): UserAlbumsPage {

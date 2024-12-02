@@ -33,7 +33,7 @@ data class Playlist(
 }
 
 @Serializable
-data class PartialPlaylist(
+data class SimplifiedPlaylist(
     val id: String,
     val name: String,
     val description: String? = null,

@@ -78,6 +78,11 @@ class Kotify(
     val authorization = AuthorizationService(this)
 
     /**
+     * Browse service
+     */
+    val browse = BrowseService(this)
+
+    /**
      * Categories service.
      */
     val categories = CategoriesService(this)

@@ -22,7 +22,7 @@ data class Album(
 )
 
 @Serializable
-data class PartialAlbum(
+data class SimplifiedAlbum(
     val id: String,
     val name: String,
     val uri: String,
@@ -36,4 +36,9 @@ data class PartialAlbum(
     @SerialName("release_date_precision") val releaseDatePrecision: String,
     val type: String,
     val artist: List<Artist>? = null
+)
+
+@Serializable
+data class SeveralAlbumResponse(
+    val albums: List<Album>
 )
