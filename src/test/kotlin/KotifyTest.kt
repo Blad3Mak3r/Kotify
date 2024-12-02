@@ -84,13 +84,27 @@ class KotifyTest {
     }
 
     @Test
-    fun `6 - Get recommendations by track id`() = runBlocking {
-        val recommendations = kotify.recommendations.byTrackIds("03UrZgTINDqvnUMbbIMhql")
+    fun `6 - Get new releases`() = runBlocking {
+        val newReleases = kotify.browse.getNewReleases(limit = 10).items
 
-        val tracks = recommendations.tracks
+        assert(newReleases.isNotEmpty()) {
+            "empty releases"
+        }
+
+        println("Got ${newReleases.size} new releases")
+
+        val albums = kotify.albums.getSeveralAlbums(*newReleases.map { it.id }.toTypedArray())
+
+        assert(albums.isNotEmpty()) {
+            "empty albums"
+        }
+
+        println("Got ${albums.size} albums")
+
+        val tracks = albums.map { it.tracks.items }.reduce { acc, tracks -> acc + tracks }
 
         assert(tracks.isNotEmpty()) {
-            "empty recommendations"
+            "empty tracks"
         }
 
         println("Got ${tracks.size} tracks")
