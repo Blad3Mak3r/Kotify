@@ -1,4 +1,3 @@
-import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import java.io.ByteArrayOutputStream
@@ -61,8 +60,6 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
 }
 
-val dokkaOutputDir = "${layout.buildDirectory}/dokka"
-
 tasks {
     withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
         compilerOptions {
@@ -117,11 +114,4 @@ mavenPublishing {
     publishToMavenCentral(automaticRelease = true)
 
     signAllPublications()
-}
-
-val canSign = System.getenv("SIGNING_KEY_ID") != null
-if (canSign) {
-    signing {
-        sign(publishing.publications["MavenCentral"])
-    }
 }
