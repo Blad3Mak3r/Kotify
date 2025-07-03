@@ -129,7 +129,7 @@ Configure the **Kotify** instance and execute requests:
 ```kotlin
 suspend fun main() {
 
-    val kotify = Kotify(
+    val kotify = Kotify.withClientCredentials(
         clientId = "Spotify Client ID",
         clientSecret = "Spotify Client Secret"
     )
@@ -154,6 +154,6 @@ repositories {
 }
 
 dependencies {
-    implementation("tv.blademaker:kotify:${VERSION}")
+    implementation("io.github.blad3mak3r:kotify:${VERSION}")
 }
 ```
