@@ -1,6 +1,6 @@
-import com.github.blad3mak3r.kotify.Kotify
-import com.github.blad3mak3r.kotify.exceptions.KotifyException
-import com.github.blad3mak3r.kotify.exceptions.KotifyRequestException
+import io.github.blad3mak3r.kotify.Kotify
+import io.github.blad3mak3r.kotify.exceptions.KotifyException
+import io.github.blad3mak3r.kotify.exceptions.KotifyRequestException
 import kotlinx.coroutines.runBlocking
 import org.junit.FixMethodOrder
 import org.junit.Test
@@ -15,8 +15,8 @@ class KotifyTest {
     private val notFoundAlbumID = "0a70073Gb7q0uqWyoCRy4J"
 
     companion object {
-        var kotify: Kotify = Kotify(
-            clientID = System.getenv("CLIENT_ID"),
+        var kotify: Kotify = Kotify.withClientCredentials(
+            clientId = System.getenv("CLIENT_ID"),
             clientSecret = System.getenv("CLIENT_SECRET")
         ).apply {
             Kotify.market = "ES"

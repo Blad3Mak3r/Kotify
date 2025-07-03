@@ -9,9 +9,8 @@ plugins {
 
     id("org.jetbrains.dokka") version "1.9.20"
     id("com.github.ben-manes.versions") version Versions.VERSIONS
-    id("org.jreleaser") version "1.14.0"
+    id("com.vanniktech.maven.publish") version "0.33.0"
 
-    `maven-publish`
     `java-library`
     signing
     java
@@ -41,10 +40,9 @@ val gitHash: String by lazy {
     stdout.toString().trim()
 }
 
-group = "com.github.blad3mak3r"
-val isSnapshot = System.getenv("OSSRH_SNAPSHOT") != null
+group = "io.github.blad3mak3r"
 
-version = (gitTag ?: gitHash).plus(if (isSnapshot) "-SNAPSHOT" else "")
+version = (gitTag ?: gitHash)
 
 repositories {
     mavenCentral()
@@ -79,72 +77,46 @@ tasks {
 
 }
 
-val dokkaJavadocJar = tasks.register<Jar>("dokkaJavadocJar") {
-    dependsOn(tasks.dokkaJavadoc)
-    from(tasks.dokkaJavadoc.flatMap { it.outputDirectory })
-    archiveClassifier.set("javadoc")
-}
-
 java {
     withSourcesJar()
     targetCompatibility = JavaVersion.VERSION_17
     sourceCompatibility = JavaVersion.VERSION_17
 }
 
-val mavenCentralRepository = if (isSnapshot)
-    "https://s01.oss.sonatype.org/content/repositories/snapshots/"
-else
-    "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
+mavenPublishing {
+    coordinates("io.github.blad3mak3r", "kotify", "$version")
 
-publishing {
-    repositories {
-        maven {
-            name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/blad3mak3r/kotify")
-            credentials {
-                username = System.getenv("GITHUB_ACTOR")
-                password = System.getenv("GITHUB_TOKEN")
+    pom {
+        name.set(project.name)
+        description.set("Advanced coroutine-based Spotify API client.")
+        url.set("https://github.com/Blad3Mak3r/Kotify")
+        issueManagement {
+            system.set("GitHub")
+            url.set("https://github.com/Blad3Mak3r/Kotify/issues")
+        }
+        licenses {
+            license {
+                name.set("Apache License 2.0")
+                url.set("https://github.com/Blad3Mak3r/Kotify/LICENSE.txt")
+                distribution.set("repo")
+            }
+        }
+        scm {
+            url.set("https://github.com/Blad3Mak3r/Kotify")
+            connection.set("https://github.com/Blad3Mak3r/Kotify.git")
+            developerConnection.set("scm:git:ssh://git@github.com:Blad3Mak3r/Kotify.git")
+        }
+        developers {
+            developer {
+                name.set("Juan Luis Caro")
+                url.set("https://github.com/Blad3Mak3r")
             }
         }
     }
 
-    publications {
-        create<MavenPublication>("GitHubPackages") {
-            artifactId = "kotify"
-            groupId = project.group as String
-            version = project.version as String
-            from(components["java"])
-            artifact(dokkaJavadocJar)
+    publishToMavenCentral()
 
-            pom {
-                name.set(project.name)
-                description.set("Advanced coroutine-based Spotify API client.")
-                url.set("https://github.com/Blad3Mak3r/Kotify")
-                issueManagement {
-                    system.set("GitHub")
-                    url.set("https://github.com/Blad3Mak3r/Kotify/issues")
-                }
-                licenses {
-                    license {
-                        name.set("Apache License 2.0")
-                        url.set("https://github.com/Blad3Mak3r/Kotify/LICENSE.txt")
-                        distribution.set("repo")
-                    }
-                }
-                scm {
-                    url.set("https://github.com/Blad3Mak3r/Kotify")
-                    connection.set("https://github.com/Blad3Mak3r/Kotify.git")
-                    developerConnection.set("scm:git:ssh://git@github.com:Blad3Mak3r/Kotify.git")
-                }
-                developers {
-                    developer {
-                        name.set("Juan Luis Caro")
-                        url.set("https://github.com/Blad3Mak3r")
-                    }
-                }
-            }
-        }
-    }
+    signAllPublications()
 }
 
 val canSign = System.getenv("SIGNING_KEY_ID") != null
