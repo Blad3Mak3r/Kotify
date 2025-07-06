@@ -52,6 +52,7 @@ dependencies {
 
     implementation(libs.bundles.ktor)
     implementation(libs.bundles.kotlinxCoroutines)
+    implementation(libs.kotlinxSerialization)
     api(libs.caffeine)
 
     api(libs.slf4jApi)

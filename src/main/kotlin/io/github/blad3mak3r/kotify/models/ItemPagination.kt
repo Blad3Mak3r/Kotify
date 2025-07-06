@@ -3,7 +3,7 @@ package io.github.blad3mak3r.kotify.models
 import io.github.blad3mak3r.kotify.serializers.ItemListSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import java.net.URL
+import java.net.URI
 
 interface ItemPagination<T : Any> {
     val href: String
@@ -19,7 +19,7 @@ interface ItemPagination<T : Any> {
     fun nextValues(pagination: ItemPagination<T>): NextValues? {
         val next = pagination.next ?: return null
 
-        val url = URL(next)
+        val url = URI.create(next)
 
         val query = url.query.split("[?&]".toRegex()).associate {
             val values = it.split("=")
