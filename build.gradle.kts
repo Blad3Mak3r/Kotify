@@ -3,12 +3,12 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import java.io.ByteArrayOutputStream
 
 plugins {
-    kotlin("jvm") version Versions.KOTLIN
-    kotlin("plugin.serialization") version Versions.KOTLIN
+    alias(libs.plugins.jvm)
+    alias(libs.plugins.kotlinPluginSerialization)
 
-    id("org.jetbrains.dokka") version "1.9.20"
-    id("com.github.ben-manes.versions") version Versions.VERSIONS
-    id("com.vanniktech.maven.publish") version "0.33.0"
+    alias(libs.plugins.versions)
+
+    alias(libs.plugins.mavenPublish)
 
     `java-library`
     signing
@@ -50,12 +50,11 @@ repositories {
 dependencies {
     implementation(kotlin("stdlib", Versions.KOTLIN))
 
-    implementation(libs.bundles.ktor.client)
-    implementation(libs.ktor.serialization.json)
-    implementation(libs.bundles.kotlinx.coroutines)
+    implementation(libs.bundles.ktor)
+    implementation(libs.bundles.kotlinxCoroutines)
     api(libs.caffeine)
 
-    api(libs.slf4j.api)
+    api(libs.slf4jApi)
 
     testImplementation("junit:junit:4.13.2")
 }

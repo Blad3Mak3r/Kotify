@@ -1,30 +1,19 @@
-rootProject.name = "Kotify"
+// The settings file is the entry point of every Gradle build.
+// Its primary purpose is to define the subprojects.
+// It is also used for some aspects of project-wide configuration, like managing plugins, dependencies, etc.
+// https://docs.gradle.org/current/userguide/settings_file_basics.html
 
 dependencyResolutionManagement {
-    versionCatalogs {
-        create("libs") {
-
-            val caffeine = version("caffeine", "3.1.8")
-            val coroutines = version("coroutines", "1.9.0")
-            val ktor = version("ktor", "3.0.0")
-            val slf4j = version("slf4j", "1.7.32")
-
-            library("caffeine", "com.github.ben-manes.caffeine", "caffeine").versionRef(caffeine)
-
-            library("kotlinx-coroutines-core", "org.jetbrains.kotlinx", "kotlinx-coroutines-core").versionRef(coroutines)
-            library("kotlinx-coroutines-jdk8", "org.jetbrains.kotlinx", "kotlinx-coroutines-jdk8").versionRef(coroutines)
-
-            bundle("kotlinx-coroutines", listOf("kotlinx-coroutines-core", "kotlinx-coroutines-jdk8"))
-
-            library("ktor-client-core", "io.ktor", "ktor-client-core").versionRef(ktor)
-            library("ktor-client-cio", "io.ktor", "ktor-client-cio").versionRef(ktor)
-            library("ktor-client-content-negotiation", "io.ktor", "ktor-client-content-negotiation").versionRef(ktor)
-
-            bundle("ktor-client", listOf("ktor-client-core", "ktor-client-cio", "ktor-client-content-negotiation"))
-
-            library("ktor-serialization-json", "io.ktor", "ktor-serialization-kotlinx-json").versionRef(ktor)
-
-            library("slf4j-api", "org.slf4j", "slf4j-api").versionRef(slf4j)
-        }
+    // Use Maven Central as the default repository (where Gradle will download dependencies) in all subprojects.
+    @Suppress("UnstableApiUsage")
+    repositories {
+        mavenCentral()
     }
 }
+
+plugins {
+    // Use the Foojay Toolchains plugin to automatically download JDKs required by subprojects.
+    id("org.gradle.toolchains.foojay-resolver-convention") version "0.8.0"
+}
+
+rootProject.name = "Kotify"

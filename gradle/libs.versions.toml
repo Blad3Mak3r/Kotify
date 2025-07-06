@@ -1,0 +1,35 @@
+[versions]
+caffeine = "3.1.8"
+kotlin = "2.0.20"
+kotlinxCoroutines = "1.9.0"
+kotlinxSerializationJSON = "1.7.3"
+ktor = "3.0.0"
+slf4j = "1.7.32"
+
+mavenPublishPlugin = "0.33.0"
+
+versionsPlugin = "0.51.0"
+
+[libraries]
+caffeine = { module = "com.github.ben-manes.caffeine:caffeine", version.ref = "caffeine" }
+
+kotlinxCoroutinesCore = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutines" }
+kotlinxCoroutinesJdk8 = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8", version.ref = "kotlinxCoroutines" }
+kotlinxSerialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJSON" }
+
+ktorClientCore = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
+ktorClientCIO = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }
+ktorClientContentNegotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
+ktorSerializationJSON = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
+
+slf4jApi = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
+
+[bundles]
+ktor = ["ktorClientCore", "ktorClientCIO", "ktorClientContentNegotiation", "ktorSerializationJSON"]
+kotlinxCoroutines = ["kotlinxCoroutinesCore", "kotlinxCoroutinesJdk8"]
+
+[plugins]
+kotlinPluginSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+mavenPublish = { id = "com.vanniktech.maven.publish", version.ref = "mavenPublishPlugin" }
+versions = { id = "com.github.ben-manes.versions", version.ref = "versionsPlugin" }
